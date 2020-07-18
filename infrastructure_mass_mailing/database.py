@@ -3,7 +3,7 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, _
+from odoo import models, _
 import logging
 _logger = logging.getLogger(__name__)
 

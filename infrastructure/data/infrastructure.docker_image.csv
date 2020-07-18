@@ -1,0 +1,11 @@
+id,name,odoo_image_ids/id,odoo_version_id/id,prefix,pull_name,service
+docker_image_nginx_113,Nginx 1.13 (Official),,,,nginx,Nginx
+docker_image_odoo_80,odoo adhoc 8.0,,odoo_version_80,--link aeroo_docs:aeroo,adhoc/odoo-adhoc,Odoo
+docker_image_odoo_90,odoo adhoc 9.0,,odoo_version_90,--link aeroo_docs:aeroo,adhoc/odoo-adhoc,Odoo
+docker_image_odoo_100,Odoo 10.0 (Official),,odoo_version_100,,odoo,Odoo
+docker_image_dobtor_80,Dobtor Docker 8.0,,odoo_version_80,,dobtorsi/docker,Odoo
+docker_image_dobtor_90,Dobtor Docker 9.0,,odoo_version_90,,dobtorsi/docker,Odoo
+docker_image_dobtor_100,Dobtor Docker 10.0,,odoo_version_100,,dobtorsi/docker,Odoo
+docker_image_dobtor_110,Dobtor Docker 11.0,,odoo_version_110,,dobtorsi/docker,Odoo
+docker_image_pg_94,Postgres 9.4 con odoo user (odoo v8+),"docker_image_odoo_80,docker_image_odoo_90,docker_image_dobtor_80,docker_image_dobtor_90",,-e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo,postgres,Postgresql
+docker_image_pg_96,PostgreSQL 9.6 (Official),"docker_image_odoo_100,docker_image_dobtor_100,docker_image_dobtor_110",,-e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo,postgres,Postgresql

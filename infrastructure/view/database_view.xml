@@ -99,11 +99,11 @@
                         <label for="admin_password"/>
                         <div>
                             <!-- lo sacamos porque por mas que este invisible lo actualiza -->
-                            <!-- <field
+                             <field
                                 name="admin_password"
                                 password="True"
                                 class="oe_inline"
-                                groups="base.group_no_one"/> -->
+                                groups="base.group_no_one"/> 
                             <button name="show_passwd"
                                 string="⇒ View Password"
                                 type="object"
@@ -169,7 +169,7 @@
                         <div>
                             <field
                                 name="overall_state"
-                                class="oe_inline"/> - 
+                                class="oe_inline"/> -
                             <field
                                 name="last_overall_check_date"
                                 class="oe_inline"/>
@@ -302,7 +302,7 @@
                             <!-- <h5>Update Status:<field name="update_state"/></h5> -->
                             <h5>Overall Status:<field name="overall_state"/></h5>
                         </div>
-                        <div class="oe_clear"/> 
+                        <div class="oe_clear"/>
                     </div>
                 </t>
             </templates>

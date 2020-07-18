@@ -4,12 +4,12 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, _
-from openerp.osv import osv
-from openerp.exceptions import ValidationError
+from odoo import fields, api, _
+from odoo import models
+from odoo.exceptions import ValidationError
 
 
-class infrastructure_duplicate_db_wizard(osv.osv_memory):
+class infrastructure_duplicate_db_wizard(models.TransientModel):
     _name = "infrastructure.duplicate_db.wizard"
     _description = "Infrastructure Duplicate db Wizard"
 

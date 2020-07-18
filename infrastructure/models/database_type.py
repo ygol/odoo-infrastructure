@@ -3,8 +3,8 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, fields, tools, api, _
-from openerp.exceptions import ValidationError
+from odoo import models, fields, tools, api, _
+from odoo.exceptions import ValidationError
 import random
 import string
 import os

@@ -4,8 +4,8 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, _, models
-from openerp.exceptions import ValidationError
+from odoo import fields, api, _, models
+from odoo.exceptions import ValidationError
 
 
 class infrastructure_change_db_passwd_wizard(models.TransientModel):

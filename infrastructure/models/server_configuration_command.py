@@ -3,10 +3,10 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, fields, _
-from openerp.tools.safe_eval import safe_eval as eval
+from odoo import models, fields, _
+from odoo.tools.safe_eval import safe_eval as eval
 from fabric.api import run, cd, env
-from openerp.exceptions import ValidationError
+from odoo.exceptions import ValidationError
 from .server import custom_sudo as sudo
 from fabric.contrib.files import exists, append, sed
 import errno
@@ -30,17 +30,17 @@ class server_configuration_command(models.Model):
 
     _order = "sequence"
 
-    def execute_command(self, cr, uid, ids, context=None):
+    def execute_command(self):
         if context is None:
             context = {}
-        user = self.pool.get('res.users').browse(cr, uid, uid)
+        user = self.env['res.users'].browse(uid)
         result = []
         server_id = context.get('server_id', False)
         if not server_id:
             raise ValidationError(_('No server in context'))
-        server = self.pool['infrastructure.server'].browse(
-            cr, uid, server_id, context=context)
-        for command in self.browse(cr, uid, ids, context=context):
+        server = self.env['infrastructure.server'].browse(
+            cr, uid, server_id)
+        for command in self.browse(ids):
             command_result = False
             env.user = server.user_name
             env.password = server.password
@@ -55,7 +55,7 @@ class server_configuration_command(models.Model):
                 'sudo': sudo,
                 'server': server,
                 'cd': cd,
-                'pool': self.pool,
+                'pool': self.env,
                 'time': time,
                 'cr': cr,
                 # Fabric file commands

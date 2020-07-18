@@ -41,19 +41,19 @@
             <field name="keep_till_date"/>
             <button
                 string="Restore Database"
-                icon="gtk-go-up"
+                icon="fa-cloud-upload"
                 type="action"
                 name="%(action_infrastructure_restore_database_wizard)d"
                 help="Restore Database" context="{'search_default_database_backup_id': active_id}"/>
             <button
                 string="Get Backup"
-                icon="gtk-go-down"
+                icon="fa-cloud-download"
                 type="object"
                 name="get_backup_msg"
                 />
             <button
                 string="Delete Backup"
-                icon="gtk-cancel"
+                icon="fa-ban"
                 type="object"
                 name="delete_backup"
                 confirm="Are you sure you want to delete this backup? This can not be undone"

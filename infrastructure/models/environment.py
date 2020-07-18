@@ -4,8 +4,8 @@
 # directory
 ##############################################################################
 import string
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 from .server import custom_sudo as sudo
 from fabric.contrib.files import exists
 import os

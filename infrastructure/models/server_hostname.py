@@ -3,8 +3,8 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 from fabtools import require
 import os
 
@@ -21,53 +21,18 @@ class server_hostname(models.Model):
             'Hostname/wildcard must be unique per server!'),
     ]
 
-    sequence = fields.Integer(
-        'Sequence',
-        default=10,
-    )
-    name = fields.Char(
-        string='Name',
-        required=True
-    )
-    wildcard = fields.Boolean(
-        string='Wild Card'
-    )
-    domain_regex = fields.Char(
-        string='Domain Regex',
-        required=True,
-    )
-    server_id = fields.Many2one(
-        'infrastructure.server',
-        string='Server',
-        ondelete='cascade',
-        required=True
-    )
-    partner_id = fields.Many2one(
-        'res.partner',
-        'Partner',
-        help='If partner is set, then this hostname will be only availble '
-        'for this partner databases and instances'
-    )
-    ssl_available = fields.Boolean(
-        string='SSL Available?',
-    )
-    ssl_intermediate_certificate = fields.Text(
-        string='SSL Intermediate Certificate',
-    )
-    ssl_certificate = fields.Text(
-        string='SSL Certificate',
-    )
-    ssl_certificate_key = fields.Text(
-        string='SSL Certificate KEY',
-    )
-    ssl_certificate_path = fields.Char(
-        string='SSL Certificate',
-        compute='get_certificate_paths'
-    )
-    ssl_certificate_key_path = fields.Char(
-        string='SSL Certificate',
-        compute='get_certificate_paths'
-    )
+    sequence = fields.Integer('Sequence', default=10)
+    name = fields.Char(string='Name', required=True)
+    wildcard = fields.Boolean(string='Wild Card')
+    domain_regex = fields.Char(string='Domain Regex', required=True)
+    server_id = fields.Many2one('infrastructure.server', string='Server', ondelete='cascade', required=True)
+    partner_id = fields.Many2one('res.partner', 'Partner', help='If partner is set, then this hostname will be only availble for this partner databases and instances')
+    ssl_available = fields.Boolean(string='SSL Available?')
+    ssl_intermediate_certificate = fields.Text(string='SSL Intermediate Certificate')
+    ssl_certificate = fields.Text(string='SSL Certificate')
+    ssl_certificate_key = fields.Text(string='SSL Certificate KEY')
+    ssl_certificate_path = fields.Char(string='SSL Certificate', compute='get_certificate_paths')
+    ssl_certificate_key_path = fields.Char(string='SSL Certificate', compute='get_certificate_paths')
 
     @api.one
     @api.depends('name')
@@ -93,12 +58,15 @@ class server_hostname(models.Model):
                 # "/(.*)tuukan\.com$/"
         self.domain_regex = domain_regex
 
-    def name_get(self, cr, uid, ids, context=None):
-        if not ids:
+    def name_get(self):
+        ids = []
+        if not self.ids:
             return []
-        if isinstance(ids, (int, long)):
-            ids = [ids]
-        reads = self.read(cr, uid, ids, ['name', 'wildcard'], context=context)
+        if isinstance(self.ids, (int, long)):
+            ids = [self.ids]
+        else:
+            ids = self.ids
+        reads = self.search_read([('id', 'in',ids)], ['name', 'wildcard'])
         res = []
         for record in reads:
             name = record['name']

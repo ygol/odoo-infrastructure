@@ -4,8 +4,8 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, models
-# from openerp.exceptions import ValidationError
+from odoo import fields, api, models
+# from odoo.exceptions import ValidationError
 
 
 class infrastructure_database_email_wizard(models.TransientModel):

@@ -3,7 +3,7 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import fields, api, models
+from odoo import fields, api, models
 
 
 class infrastructure_duplicate_instance_wizard(models.TransientModel):

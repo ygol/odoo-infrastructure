@@ -1,0 +1,7 @@
+id,server_configuration_id/id,sequence,command,name
+server_conf_16_04_server_cmd1,server_conf_16_04_server,1,sudo ('apt-get update'),Apt get update
+server_conf_16_04_server_cmd2,server_conf_16_04_server,2,sudo ('apt-get install -y apt-transport-https software-properties-common wget git dtach nginx'),Install dependencies
+server_conf_16_04_server_cmd3,server_conf_16_04_server,3,sudo ('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -'),Add docker apt key
+server_conf_16_04_server_cmd4,server_conf_16_04_server,4,sudo ('add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"'),Add Docker official repository
+server_conf_16_04_server_cmd5,server_conf_16_04_server,5,sudo ('apt-get update'),Update apt pacakages list
+server_conf_16_04_server_cmd6,server_conf_16_04_server,6,sudo ('apt-get install -y docker-ce'),Install Docker Engine Community edition

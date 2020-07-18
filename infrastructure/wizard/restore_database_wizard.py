@@ -3,8 +3,8 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import fields, api, models, _
-from openerp.exceptions import ValidationError
+from odoo import fields, api, models, _
+from odoo.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ class infrastructure_restore_database_wizard(models.TransientModel):
             database = self.database_backup_id.database_id.copy({
                 'name': db_name,
                 'backups_enable': backups_enable,
-                'issue_date': fields.Date.today(),
+            'issue_date': fields.Date.today(),
                 # 'database_type_id': database_type.id,
                 'instance_id': instance.id,
             })

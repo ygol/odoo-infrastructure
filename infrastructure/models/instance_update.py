@@ -4,8 +4,8 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, models
-from openerp.exceptions import ValidationError
+from odoo import fields, api, models
+from odoo.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 

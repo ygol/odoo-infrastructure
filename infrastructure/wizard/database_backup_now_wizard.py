@@ -4,14 +4,14 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, _
-from openerp.osv import osv
-from openerp.exceptions import ValidationError
+from odoo import fields, api, _
+from odoo import models
+from odoo.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
 from datetime import date
 
 
-class infrastructure_database_backup_now_wizard(osv.osv_memory):
+class infrastructure_database_backup_now_wizard(models.TransientModel):
     _name = "infrastructure.database.backup_now.wizard"
     _description = "Infrastructure Database Backup Now Wizard"
 

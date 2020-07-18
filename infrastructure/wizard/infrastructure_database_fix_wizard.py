@@ -4,9 +4,9 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, models
-# from openerp.exceptions import ValidationError
-from openerp.addons.infrastructure.models.database import _update_state_vals
+from odoo import fields, api, models
+# from odoo.exceptions import ValidationError
+from odoo.addons.infrastructure.models.database import _update_state_vals
 # from ast import literal_eval
 import logging
 _logger = logging.getLogger(__name__)

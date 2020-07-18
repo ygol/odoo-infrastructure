@@ -76,8 +76,8 @@
                         <field name="database_count" widget="statinfo"/>
                     </button>
                     <button icon="fa-sun-o " type="object" string="Activate" class="oe_stat_button" help="Test connection, check distribution, get processors data and activate" name="get_data_and_activate" states="draft"/>
-                    <button name="reboot_server" icon="fa-refresh" string="Reboot Server" class="oe_stat_button" help="Reboot Server" confirm="Are you sure you want to reboot the server?" states="to_install,active"/>
-                    <button name="restart_nginx" icon="fa-refresh" string="Restart Nginx" class="oe_stat_button" help="Restart Nginx" confirm="Are you sure you want to restart nxginx?" states="to_install,active"/>
+                    <button name="reboot_server" type="object" icon="fa-refresh" string="Reboot Server" class="oe_stat_button" help="Reboot Server" confirm="Are you sure you want to reboot the server?" states="to_install,active"/>
+                    <button name="restart_nginx" type="object" icon="fa-refresh" string="Restart Nginx" class="oe_stat_button" help="Restart Nginx" confirm="Are you sure you want to restart nxginx?" states="to_install,active"/>
                 </div>
                 <h1>
                     <field name="name" placeholder="Name..."/>
@@ -120,8 +120,9 @@
                         <field name="holder_id"/>
                     </group>
                 </group>
+                <field name="docker_image_ids" invisible="True"/>
                 <notebook>
-                    <page string="Gral. Info">
+                    <page string="General Info">
                         <group>
                             <group>
                                 <field name="postfix_hostname"/>
@@ -199,14 +200,14 @@
                     <page string="Docker Images" states="to_install,active">
                        <field name="server_docker_image_ids"/>
                     </page>
-                    <page string="Hostnames" states="active">
+                    <page string="Hostnames" states="to_install,active">
                         <button type="object" name="configure_hosts" string="Configure Hosts" help="Add to postfix virutal domains so that you can use them in catchall and Also Load SSL Certificates" class="oe_highlight"/>
                         <field name="hostname_ids"/>
                     </page>
                     <page string="Changes" states="active">
                        <field name="change_ids"/>
                     </page>
-                    <page string="Data">
+                    <page string="Notes">
                        <field name="note"/>
                    </page>
                </notebook>

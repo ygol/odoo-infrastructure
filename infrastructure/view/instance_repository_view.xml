@@ -46,11 +46,11 @@
     <field name="arch" type="xml">
         <tree string="instance_repository" editable="bottom">
             <button string="Clone, Pull and Checkout"
-                icon="gtk-go-down"
+                icon="fa-cloud-download"
                 type="object"
                 name="action_repository_pull_clone_and_checkout"/>
             <button string="Pull Source and Active Repository"
-                icon="gtk-goto-bottom"
+                icon="fa-download"
                 type="object"
                 attrs="{'invisible':[('sources_from_id','=',False)]}"
                 confirm="Are you sure you want to force an update of source repository and actual repository?"
@@ -61,7 +61,7 @@
             <field name="actual_commit"/>
             <field name="sources_from_id" invisible="1"/>
             <button string="Delete"
-                icon="gtk-cancel"
+                icon="fa-times-circle"
                 type="object"
                 confirm="Are you sure you want to delete this repository folder? After deletion remembet to reconfig odoo config file."
                 help='Delte repository forlder'

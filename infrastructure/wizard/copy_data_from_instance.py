@@ -3,11 +3,11 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import fields, api
-from openerp.osv import osv
+from odoo import fields, api
+from odoo import models
 
 
-class infrastructure_copy_data_from_instance(osv.osv_memory):
+class infrastructure_copy_data_from_instance(models.TransientModel):
     _name = "infrastructure.copy_data_from_instance.wizard"
     _description = "Infrastructure Copy Data From Instance Wizard"
 

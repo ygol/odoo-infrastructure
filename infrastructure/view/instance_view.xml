@@ -84,11 +84,11 @@
                         <label for="admin_pass"/>
                         <div>
                             <!-- lo sacamos porque por mas que este invisible lo actualiza -->
-                            <!-- <field
+                            <field
                                 name="admin_pass"
                                 password="True"
                                 class="oe_inline"
-                                groups="base.group_no_one"/> -->
+                                groups="base.group_no_one"/>
                             <button name="show_passwd"
                                 string="⇒ View Password"
                                 type="object"
@@ -121,7 +121,7 @@
                 </group>
                 <notebook>
                     <page string="Configuration">
-                        <group>
+                        <group string="Hostname Settings">
                             <field name="type"/>
                             <field name="instance_host_ids"/>
                         </group>
@@ -158,12 +158,12 @@
                             type="object"
                             name="add_repositories"/>
                         <button string="Pull, Clone to Inst. and Checkout all Repositoires"
-                            icon="gtk-go-down"
+                            icon="fa-cloud-download"
                             type="object"
                             attrs="{'invisible': ['|',('sources_from_id','!=',False), ('state','!=','active')]}"
                             name="repositories_pull_clone_and_checkout"/>
                         <button string="Pull from instance:"
-                            icon="gtk-go-down"
+                            icon="fa-cloud-download"
                             type="object"
                             attrs="{'invisible': ['|',('sources_from_id','=',False), ('state','!=','active')]}"
                             name="repositories_pull_clone_and_checkout"/>

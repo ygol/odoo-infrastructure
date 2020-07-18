@@ -10,7 +10,7 @@
         <form string="Server Docker Image">
             <header>
                 <button string="Pull Image"
-                    icon="gtk-go-down"
+                    icon="fa-cloud-download"
                     type="object"
                     name="pull_image"/>
             </header>
@@ -31,11 +31,11 @@
         <tree string="Server Docker Image" editable="bottom">
             <field name="docker_image_id"/>
             <button string="Pull Image"
-                icon="gtk-go-down"
+                icon="fa-arrow-circle-down"
                 type="object"
                 name="pull_image"/>
             <button string="Pull Image Detached"
-                icon="gtk-go-down"
+                icon="fa-arrow-circle-o-down"
                 type="object"
                 name="pull_image_detached"/>
         </tree>

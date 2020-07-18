@@ -3,7 +3,7 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, fields, api
+from odoo import models, fields, api
 from .server import custom_sudo as sudo
 import logging
 _logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class server_docker_image(models.Model):
     ]
 
     @api.multi
-    def pull_image(self, context=None, detached=False):
+    def pull_image(self, detached=False):
         """ Tuvimos que ponerle el context porque desde la vista lo pasa sin
         enmascararlo en self"""
         self.server_id.get_env()

@@ -1,0 +1,11 @@
+id,name,docker_image_id/id
+docker_image_nginx_tag_113,1.13,docker_image_nginx_113
+docker_image_pg_tag_94,9.4,docker_image_pg_94
+docker_image_pg_tag_96,9.6,docker_image_pg_96
+docker_image_odoo_tag_80,8.0,docker_image_odoo_80
+docker_image_odoo_tag_90,9.0,docker_image_odoo_90
+docker_image_odoo_tag_100,10.0,docker_image_odoo_100
+docker_image_odoo_tag_80,8.0,docker_image_dobtor_80
+docker_image_odoo_tag_90,9.0,docker_image_dobtor_90
+docker_image_odoo_tag_100,10.0,docker_image_dobtor_100
+docker_image_odoo_tag_110,11.0,docker_image_dobtor_110

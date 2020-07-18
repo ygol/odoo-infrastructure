@@ -4,8 +4,8 @@
 # directory
 ##############################################################################
 
-from openerp import fields, api, _, models
-from openerp.exceptions import ValidationError
+from odoo import fields, api, _, models
+from odoo.exceptions import ValidationError
 
 
 class infrastructure_database_drop_wizard(models.TransientModel):

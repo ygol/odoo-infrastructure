@@ -3,8 +3,9 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, ValidationError
+from odoo import models, fields, api, _
+#from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, RedirectWarning, ValidationError, except_orm
 from fabric.api import env, reboot
 from fabric.contrib.files import append, upload_template
 from fabric.api import sudo
@@ -82,341 +83,101 @@ class server(models.Model):
     _order = 'sequence'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
-    _states_ = [
-        ('draft', 'Draft'),
-        ('to_install', 'To Install'),
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
-        ('cancel', 'Cancel'),
-    ]
+    _states_ = [('draft', 'Draft'), ('to_install', 'To Install'), ('active', 'Active'), ('inactive', 'Inactive'), ('cancel', 'Cancel')]
 
-    sequence = fields.Integer(
-        'Sequence',
-        default=10,
-    )
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    ip_address = fields.Char(
-        string='IP Address',
-        readonly=True,
-    )
-    ssh_port = fields.Integer(
-        string='SSH Port',
-        required=True,
-        help='Port used for ssh connection to the server',
-        default=22,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    smtp_port = fields.Integer(
-        string='SMTP Port',
-        help='Port used for incoming emails',
-        required=True,
-        default=25,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    http_port = fields.Integer(
-        string='HTTP Port',
-        required=True,
-        default=80,
-        help='Port used to access odoo via web browser',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    https_port = fields.Integer(
-        string='HTTPS Port',
-        required=True,
-        default=443,
-        help='Port used to access odoo via web browser over ssl',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    main_hostname = fields.Char(
-        string='Main Hostname',
-        required=True,
-    )
-    user_name = fields.Char(
-        string='User Name',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    number_of_processors = fields.Integer(
-        string='Number of Processors',
-        readonly=True,
+    sequence = fields.Integer('Sequence', default=10)
+    name = fields.Char(string='Name', required=True)
+    ip_address = fields.Char(string='IP Address', readonly=True)
+    ssh_port = fields.Integer(string='SSH Port', required=True, help='Port used for ssh connection to the server', default=22, readonly=True, states={'draft': [('readonly', False)]})
+    smtp_port = fields.Integer(string='SMTP Port', help='Port used for incoming emails', required=True, default=25, readonly=True, states={'draft': [('readonly', False)]})
+    http_port = fields.Integer(string='HTTP Port', required=True, default=80, help='Port used to access odoo via web browser', readonly=True, states={'draft': [('readonly', False)]})
+    https_port = fields.Integer(string='HTTPS Port', required=True, default=443, help='Port used to access odoo via web browser over ssl', readonly=True,
+                                states={'draft': [('readonly', False)]})
+    main_hostname = fields.Char(string='Main Hostname', required=True)
+    user_name = fields.Char(string='User Name', required=True, readonly=True, states={'draft': [('readonly', False)]})
+    number_of_processors = fields.Integer(string='Number of Processors', readonly=True,
         help="This is used to suggest instance workers qty, you can get this "
-        "information with: grep processor /proc/cpuinfo | wc -l",
-    )
-    key_filename = fields.Char(
+        "information with: grep processor /proc/cpuinfo | wc -l")
+    key_filename = fields.Char(readonly=True, states={'draft': [('readonly', False)]},
         # required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
         help='This file must be owned by adhoc-server and with 400 perm.\n'
         'To do that, run:\n'
         '* sudo chown syslog.netdev [file path]\n'
         '* sudo chmod 400  [file path]\n'
-    )
-    password = fields.Char(
-        string='Password',
+        )
+    password = fields.Char( string='Password', readonly=True, states={'draft': [('readonly', False)]},
         # required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    server_use_type = fields.Selection(
-        [('customer', 'Customer'), ('own', 'Own')],
-        'Server Type',
-        default='customer',
-        required=True,
-    )
-    holder_id = fields.Many2one(
-        'res.partner',
-        string='Holder',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        )
+    server_use_type = fields.Selection([('customer', 'Customer'), ('own', 'Own')], 'Server Type', default='customer', required=True)
+    holder_id = fields.Many2one('res.partner', string='Holder', required=True, readonly=True, states={'draft': [('readonly', False)]},
         help='Partner that you should contact related to server service.',
-    )
-    owner_id = fields.Many2one(
-        'res.partner',
-        string='Owner',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        )
+    owner_id = fields.Many2one('res.partner', string='Owner', required=True, readonly=True, states={'draft': [('readonly', False)]},
         help='Owner of the server, the one you should contacto to make '
         'changes on, for example, hardware.'
-    )
-    used_by_id = fields.Many2one(
-        'res.partner',
-        string='Used By',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        )
+    used_by_id = fields.Many2one('res.partner', string='Used By', readonly=True, states={'draft': [('readonly', False)]},
         help='Partner that can contact you and ask for changes on server '
         'configuration'
-    )
-    database_ids = fields.One2many(
-        'infrastructure.database',
-        'server_id',
-        string='Databases',
+        )
+    database_ids = fields.One2many('infrastructure.database', 'server_id', string='Databases',
         # domain=[('state', '!=', 'cancel')],
-    )
-    database_count = fields.Integer(
-        string='# Databases',
-        compute='_get_databases',
-    )
-    instance_ids = fields.One2many(
-        'infrastructure.instance',
-        'server_id',
-        string='Databases',
+        )
+    database_count = fields.Integer(string='# Databases', compute='_get_databases')
+    instance_ids = fields.One2many('infrastructure.instance', 'server_id', string='Databases',
         # domain=[('state', '!=', 'cancel')],
-    )
-    instance_count = fields.Integer(
-        string='# Instances',
-        compute='_get_instances',
-    )
-    note = fields.Html(
-        string='Note',
-    )
-    base_path = fields.Char(
-        string='Base path',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        default='/opt/odoo',
-    )
-    ssl_path = fields.Char(
-        string='SSL path',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        default='/etc/nginx/ssl',
-    )
-    afip_homo_pkey_file = fields.Char(
-        string='AFIP homo pkey file',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        default='/opt/odoo/backups/homo.pkey',
-    )
-    afip_prod_pkey_file = fields.Char(
-        string='AFIP prod pkey file',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        default='/opt/odoo/backups/prod.pkey',
-    )
-    afip_homo_cert_file = fields.Char(
-        string='AFIP homo cert file',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        default='/opt/odoo/backups/homo.cert',
-    )
-    afip_prod_cert_file = fields.Char(
-        string='AFIP prod cert file',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-        default='/opt/odoo/backups/prod.cert',
-    )
-    afip_prod_cert_content = fields.Text(
-        string='AFIP prod cert Content',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    afip_homo_cert_content = fields.Text(
-        string='AFIP homo cert Content',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    afip_prod_pkey_content = fields.Text(
-        string='AFIP prod pkey Content',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    afip_homo_pkey_content = fields.Text(
-        string='AFIP homo pkey Content',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    backups_path = fields.Char(
-        string='Backups Path',
-        readonly=True,
-        required=True,
-        default='/opt/odoo/backups',
-        states={'draft': [('readonly', False)]},
-    )
-    syncked_backups_path = fields.Char(
-        string='Syncked Backups Path',
-        readonly=True,
-        required=True,
-        default='/opt/odoo/backups/syncked',
-        states={'draft': [('readonly', False)]},
-    )
-    mailgate_file = fields.Char(
-        string='Mailgate File',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        )
+    instance_count = fields.Integer(string='# Instances', compute='_get_instances')
+    note = fields.Html(string='Note')
+    base_path = fields.Char(string='Base path', required=True, readonly=True, states={'draft': [('readonly', False)]}, default='/opt/odoo')
+    ssl_path = fields.Char(string='SSL path', required=True, readonly=True, states={'draft': [('readonly', False)]}, default='/etc/nginx/ssl')
+    afip_homo_pkey_file = fields.Char(string='AFIP homo pkey file', readonly=True, states={'draft': [('readonly', False)]}, default='/opt/odoo/backups/homo.pkey')
+    afip_prod_pkey_file = fields.Char(string='AFIP prod pkey file', readonly=True, states={'draft': [('readonly', False)]}, default='/opt/odoo/backups/prod.pkey')
+    afip_homo_cert_file = fields.Char(string='AFIP homo cert file', readonly=True, states={'draft': [('readonly', False)]}, default='/opt/odoo/backups/homo.cert')
+    afip_prod_cert_file = fields.Char(string='AFIP prod cert file', readonly=True, states={'draft': [('readonly', False)]}, default='/opt/odoo/backups/prod.cert')
+    afip_prod_cert_content = fields.Text(string='AFIP prod cert Content', readonly=True, states={'draft': [('readonly', False)]})
+    afip_homo_cert_content = fields.Text(string='AFIP homo cert Content', readonly=True, states={'draft': [('readonly', False)]})
+    afip_prod_pkey_content = fields.Text(string='AFIP prod pkey Content', readonly=True, states={'draft': [('readonly', False)]})
+    afip_homo_pkey_content = fields.Text(string='AFIP homo pkey Content', readonly=True, states={'draft': [('readonly', False)]})
+    backups_path = fields.Char(string='Backups Path', readonly=True, required=True, default='/opt/odoo/backups', states={'draft': [('readonly', False)]})
+    syncked_backups_path = fields.Char(string='Syncked Backups Path', readonly=True, required=True, default='/opt/odoo/backups/syncked', states={'draft': [('readonly', False)]})
+    mailgate_file = fields.Char(string='Mailgate File', readonly=True, states={'draft': [('readonly', False)]},
         help='Mailgate File is Copided to Server and Computed when installing '
         'postfix'
-    )
-    color = fields.Integer(
-        string='Color Index',
-        compute='get_color',
-    )
-    nginx_log_path = fields.Char(
-        string='Nginx Log Path',
-        readonly=True,
-        required=True,
-        states={'draft': [('readonly', False)]},
-        default='/var/log/nginx',
-    )
-    nginx_sites_path = fields.Char(
-        string='Nginx Sites Path',
-        readonly=True,
-        required=True,
-        states={'draft': [('readonly', False)]},
-        default='/etc/nginx/sites-enabled',
-    )
-    nginx_sites_path = fields.Char(
-        string='Nginx Sites Path',
-        readonly=True,
-        required=True,
-        states={'draft': [('readonly', False)]},
-        default='/etc/nginx/sites-enabled',
-    )
-    gdrive_account = fields.Char(
-        string='Gdrive Account',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    gdrive_passw = fields.Char(
-        string='Gdrive Password',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    gdrive_space = fields.Char(
-        string='Gdrive Space',
-    )
-    requires_vpn = fields.Boolean(
-        string='Requires VPN?',
-    )
-    state = fields.Selection(
-        _states_,
-        string="State",
-        default='draft',
-    )
-    server_docker_image_ids = fields.One2many(
-        'infrastructure.server_docker_image',
-        'server_id',
-        string='Docker Images',
-    )
-    hostname_ids = fields.One2many(
-        'infrastructure.server_hostname',
-        'server_id',
-        string='Hostnames',
-    )
-    change_ids = fields.One2many(
-        'infrastructure.server_change',
-        'server_id',
-        string='Changes',
-    )
-    environment_ids = fields.One2many(
-        'infrastructure.environment',
-        'server_id',
-        string='Environments',
+        )
+    color = fields.Integer(string='Color Index', compute='get_color')
+    nginx_log_path = fields.Char(string='Nginx Log Path', readonly=True, required=True, states={'draft': [('readonly', False)]}, default='/var/log/nginx')
+    nginx_sites_path = fields.Char(string='Nginx Sites Path', readonly=True, required=True, states={'draft': [('readonly', False)]}, default='/etc/nginx/sites-enabled')
+    nginx_sites_path = fields.Char(string='Nginx Sites Path', readonly=True, required=True, states={'draft': [('readonly', False)]}, default='/etc/nginx/sites-enabled')
+    gdrive_account = fields.Char(string='Gdrive Account', readonly=True, states={'draft': [('readonly', False)]})
+    gdrive_passw = fields.Char(string='Gdrive Password', readonly=True, states={'draft': [('readonly', False)]})
+    gdrive_space = fields.Char(string='Gdrive Space')
+    requires_vpn = fields.Boolean(string='Requires VPN?')
+    state = fields.Selection(_states_, string="State", default='draft')
+    server_docker_image_ids = fields.One2many('infrastructure.server_docker_image', 'server_id', string='Docker Images')
+    hostname_ids = fields.One2many('infrastructure.server_hostname', 'server_id', string='Hostnames')
+    change_ids = fields.One2many('infrastructure.server_change', 'server_id', string='Changes')
+    environment_ids = fields.One2many('infrastructure.environment', 'server_id', string='Environments', context={'from_server': True},
         # domain=[('state', '!=', 'cancel')],
-        context={'from_server': True},
-    )
-    server_configuration_id = fields.Many2one(
-        'infrastructure.server_configuration',
-        string='Server Config.',
-        required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
-    install_command_ids = fields.One2many(
-        'infrastructure.server_configuration_command',
-        string='Installation Commands',
-        related="server_configuration_id.install_command_ids",
-        readonly=True,
-    )
-    environment_count = fields.Integer(
-        string='# Environment',
-        compute='_get_environments',
-    )
-    local_alias_path = fields.Char(
-        string='Local Aliases Path',
-        help='Local Alias Path For Catch All Configuration',
-        readonly=True,
-        required=True,
-        states={'draft': [('readonly', False)]},
-        default='/etc/aliases',
-    )
-    virtual_alias_path = fields.Char(
-        string='Virtual Aliases Path',
-        readonly=True,
-        required=True,
-        help='Virtual Alias Path For Postfix Catch All Configuration',
-        states={'draft': [('readonly', False)]},
-        default='/etc/postfix/virtual_aliases',
-    )
-    virtual_domains_regex_path = fields.Char(
-        string='Virtual Domain Regex Path',
-        readonly=True,
-        required=True,
-        help='Virtual Domain Regex Path For Postfix Catch All Configuration',
-        states={'draft': [('readonly', False)]},
-        default='/etc/postfix/virtual_domains_regex',
-    )
-    postfix_hostname = fields.Char(
-        string='Postfix Hostname',
-        readonly=True,
-        states={'draft': [('readonly', False)]},
-    )
+        )
+    server_configuration_id = fields.Many2one('infrastructure.server_configuration', string='Server Config.', required=True, readonly=True, states={'draft': [('readonly', False)]})
+    install_command_ids = fields.One2many('infrastructure.server_configuration_command', string='Installation Commands', related="server_configuration_id.install_command_ids", readonly=True)
+    environment_count = fields.Integer(string='# Environment', compute='_get_environments')
+    local_alias_path = fields.Char(string='Local Aliases Path', help='Local Alias Path For Catch All Configuration', readonly=True, required=True,
+                                   states={'draft': [('readonly', False)]}, default='/etc/aliases')
+    virtual_alias_path = fields.Char(string='Virtual Aliases Path', readonly=True, required=True, help='Virtual Alias Path For Postfix Catch All Configuration',
+                                     states={'draft': [('readonly', False)]}, default='/etc/postfix/virtual_aliases')
+    virtual_domains_regex_path = fields.Char(string='Virtual Domain Regex Path', readonly=True, required=True, states={'draft': [('readonly', False)]},
+        help='Virtual Domain Regex Path For Postfix Catch All Configuration', default='/etc/postfix/virtual_domains_regex')
+    postfix_hostname = fields.Char(string='Postfix Hostname', readonly=True, states={'draft': [('readonly', False)]})
+    docker_image_ids = fields.Many2many('infrastructure.docker_image', string='Docker Images Referenced', compute='_get_docker_images')
+    _sql_constraints = [('name_uniq', 'unique(name)', 'Server Name must be unique!')]
 
-    _sql_constraints = [
-        ('name_uniq', 'unique(name)',
-            'Server Name must be unique!'),
-    ]
+    @api.one
+    @api.depends('server_docker_image_ids')
+    def _get_docker_images(self):
+        self.docker_image_ids = self.env['infrastructure.docker_image']
+        self.docker_image_ids = [x.docker_image_id.id for x in (self.server_docker_image_ids)]
 
     @api.one
     @api.constrains('key_filename', 'password')
@@ -524,7 +285,8 @@ class server(models.Model):
                 "* Server Codename: %s\n"
                 "* Server Configuration Codename: %s") % (
                 server_codename, server_conf_codename))
-        self.number_of_processors = fabtools.system.cpus()
+        result_proc_count = sudo('grep -c ^processor /proc/cpuinfo')
+        self.number_of_processors = result_proc_count
         self.add_images()
         self.action_to_install()
 
@@ -541,8 +303,8 @@ class server(models.Model):
         self.get_env()
         # if draft state do no test http and smtp because perhups they are
         # not installed
-        if self.state != 'draft':
-            self.check_service_exist(self.http_port)
+        if self.state not in ('draft', 'to_install', 'active'):
+            self.check_service_exist(self.ssh_port)
             # TODO activate https check, we are not using it yet
             # self.check_service_exist(self.https_port)
             self.check_service_exist(self.smtp_port)
@@ -634,6 +396,7 @@ class server(models.Model):
 
     @api.multi
     def reboot_server(self):
+        print 'received request to reboot '
         self.get_env()
         reboot()
 
@@ -664,6 +427,14 @@ class server(models.Model):
 
     @api.multi
     def action_to_install(self):
+        self.get_env()
+        if self.server_configuration_id:
+            if self.server_configuration_id.install_command_ids:
+                for command_rec in self.server_configuration_id.install_command_ids:
+                    if command_rec.command:
+                        print 'Executing command on the target machine ', command_rec.command
+                        command_result = sudo(command_rec.command)
+                        print 'Command Result ', command_result
         self.write({'state': 'to_install'})
 
     @api.multi

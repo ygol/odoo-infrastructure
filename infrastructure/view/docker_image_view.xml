@@ -41,6 +41,8 @@
                 <field name="odoo_data_dir" attrs="{'invisible':[('service', '!=', 'odoo')],'required':[('service', '=', 'odoo')]}"/>
                 <field name="odoo_extra_addons_dir" attrs="{'invisible':[('service', '!=', 'odoo')]}"/>
                 <field name="odoo_etc_dir" attrs="{'invisible':[('service', '!=', 'odoo')]}"/>
+                <field name="odoo_config_file" attrs="{'invisible':[('service', '!=', 'odoo')]}"/>
+                <field name="odoo_log_file" attrs="{'invisible':[('service', '!=', 'odoo')]}"/>
                 <field name="odoo_server_wide_modules" attrs="{'invisible':[('service', '!=', 'odoo')]}"/>
                 <field name="pg_image_ids" widget="many2many_tags" attrs="{'invisible':[('service', '!=', 'odoo')],'required':[('service', '=', 'odoo')]}"/>
                 <field name="tag_ids">
