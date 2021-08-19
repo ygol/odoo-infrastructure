@@ -22,14 +22,14 @@
             <field name="overall_state"/>
             <!-- <filter string="Not Cancel" name="check_database" domain="[('check_database', '=', True)]"/> -->
             <group expand="0" string="Group By...">
-                <filter string="Partner" context="{'group_by':'partner_id'}"/>
-                <!-- <filter string="Type" context="{'group_by':'database_type_id'}"/> -->
-                <filter string="Type" context="{'group_by':'instance_type_id'}"/>
-                <filter string="Server" context="{'group_by':'server_id'}"/>
-                <filter string="Environment" context="{'group_by':'environment_id'}"/>
-                <filter string="Instance" context="{'group_by':'instance_id'}"/>
-                <filter string="Update State" context="{'group_by':'update_state'}"/>
-                <filter string="Overall State" context="{'group_by':'overall_state'}"/>
+                <filter name="Partner" string="Partner" context="{'group_by':'partner_id'}"/>
+                <!-- <filter name="database_type" string="Type" context="{'group_by':'database_type_id'}"/> -->
+                <filter name="Type" string="Type" context="{'group_by':'instance_type_id'}"/>
+                <filter name="Server" string="Server" context="{'group_by':'server_id'}"/>
+                <filter name="Environment" string="Environment" context="{'group_by':'environment_id'}"/>
+                <filter name="Instance" string="Instance" context="{'group_by':'instance_id'}"/>
+                <filter name="update_state" string="Update State" context="{'group_by':'update_state'}"/>
+                <filter name="overall_state" string="Overall State" context="{'group_by':'overall_state'}"/>
             </group>
         </search>
     </field>
@@ -102,7 +102,7 @@
                                 name="admin_password"
                                 password="True"
                                 class="oe_inline"
-                                groups="base.group_no_one"/> 
+                                groups="base.group_no_one"/>
                             <button name="show_passwd"
                                 string="⇒ View Password"
                                 type="object"
@@ -262,8 +262,6 @@
     <field name="model">infrastructure.database</field>
     <field name="arch" type="xml">
         <tree string="database"
-            fonts="bold:message_unread==True"
-            colors="red:overall_state == 'error'; grey:state=='cancelled';blue:state in ('draft',); black:state in ('active', 'deactivated', 'maintenance')"
             >
             <field name="message_unread" invisible="1"/>
             <!-- <field name="database_type_id"/> -->

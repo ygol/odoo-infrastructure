@@ -40,7 +40,7 @@ def synchronize_on_config_parameter(env, parameter, nowait=False):
                     where id = %s
                     for update %s""" % (param.id, nowait_str)
             )
-        except psycopg2.OperationalError, e:
+        except (psycopg2.OperationalError, e):
             raise ValidationError(
                 'Cannot synchronize access. Another process lock the parameter'
                 'This is what we get: %s' % e
@@ -80,7 +80,7 @@ class server(models.Model):
     _name = 'infrastructure.server'
     _description = 'server'
     _order = 'sequence'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     _states_ = [('draft', 'Draft'), ('to_install', 'To Install'), ('active', 'Active'), ('inactive', 'Inactive'), ('cancel', 'Cancel')]
 
@@ -375,7 +375,7 @@ class server(models.Model):
         ))
 
     def reboot_server(self):
-        print 'received request to reboot '
+        print ('received request to reboot ')
         self.get_env()
         reboot()
 
@@ -384,7 +384,7 @@ class server(models.Model):
         self.get_env()
         try:
             custom_sudo('service nginx restart')
-        except Exception, e:
+        except (Exception, e):
             raise ValidationError(
                 _('Could Not Restart Nginx! This is what we get: \n %s') % (e))
 
@@ -393,7 +393,7 @@ class server(models.Model):
         self.get_env()
         try:
             custom_sudo('nginx -s reload')
-        except Exception, e:
+        except (Exception, e):
             raise ValidationError(
                 _('Could Not Reload Nginx! This is what we get: \n %s') % (e))
 
@@ -407,9 +407,9 @@ class server(models.Model):
             if self.server_configuration_id.install_command_ids:
                 for command_rec in self.server_configuration_id.install_command_ids:
                     if command_rec.command:
-                        print 'Executing command on the target machine ', command_rec.command
+                        print ('Executing command on the target machine ', command_rec.command)
                         command_result = sudo(command_rec.command)
-                        print 'Command Result ', command_result
+                        print ('Command Result ', command_result)
         self.write({'state': 'to_install'})
 
     def action_activate(self):
@@ -440,8 +440,8 @@ class server(models.Model):
             res = upload_template(
                 local_mailgate_file, self.base_path,
                 use_sudo=True,
-                mode=0777)
-        except Exception, e:
+                mode='0777')
+        except (Exception, e):
             raise ValidationError(_(
                 "Can not run upload mailgate file:\n"
                 "This is what we get:\n%s") % e)
