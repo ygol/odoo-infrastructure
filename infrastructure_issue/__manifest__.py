@@ -1,7 +1,7 @@
 
 {
     'name': 'Infrastructure Issue - Project',
-    'version': "13.0.1.0.0",
+    'version': "14.0.1.0.0",
     'description': u'Infrastructure Issue',
     'category': u'base.module_category_knowledge_management',
     'author': u'ADHOC SA',
