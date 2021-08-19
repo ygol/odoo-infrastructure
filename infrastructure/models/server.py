@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -173,13 +172,11 @@ class server(models.Model):
     docker_image_ids = fields.Many2many('infrastructure.docker_image', string='Docker Images Referenced', compute='_get_docker_images')
     _sql_constraints = [('name_uniq', 'unique(name)', 'Server Name must be unique!')]
 
-    @api.one
     @api.depends('server_docker_image_ids')
     def _get_docker_images(self):
         self.docker_image_ids = self.env['infrastructure.docker_image']
         self.docker_image_ids = [x.docker_image_id.id for x in (self.server_docker_image_ids)]
 
-    @api.one
     @api.constrains('key_filename', 'password')
     def check_key_or_pass(self):
         if not self.key_filename and not self.password:
@@ -190,14 +187,12 @@ class server(models.Model):
         if not self.postfix_hostname:
             self.postfix_hostname = self.main_hostname
 
-    @api.one
     def unlink(self):
         if self.state not in ('draft', 'cancel'):
             raise ValidationError(_(
                 'You cannot delete a server which is not draft or cancelled.'))
         return super(server, self).unlink()
 
-    @api.one
     @api.depends('state')
     def get_color(self):
         color = 4
@@ -211,22 +206,18 @@ class server(models.Model):
             color = 3
         self.color = color
 
-    @api.one
     @api.depends('environment_ids')
     def _get_environments(self):
         self.environment_count = len(self.environment_ids)
 
-    @api.one
     @api.depends('database_ids')
     def _get_databases(self):
         self.database_count = len(self.database_ids)
 
-    @api.one
     @api.depends('instance_ids')
     def _get_instances(self):
         self.instance_count = len(self.instance_ids)
 
-    @api.multi
     def get_env(self):
         # TODO ver si usamos env.keepalive = True para timeouts the nginx ()
         synchronize_on_config_parameter(
@@ -241,7 +232,6 @@ class server(models.Model):
         env.timeout = 4     # by default is 10
         return env
 
-    @api.one
     def check_service_exist(self, port):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -271,7 +261,6 @@ class server(models.Model):
             _logger.info("Connection to port %s successfully established")
         return True
 
-    @api.multi
     def get_data_and_activate(self):
         """ Check server data"""
         self.test_connection(no_prompt=True)
@@ -290,14 +279,12 @@ class server(models.Model):
         self.add_images()
         self.action_to_install()
 
-    @api.multi
     def action_test_connection(self):
         """Tenemos que crear esta funcion porque test_connection tiene un
         argumento adicional que se confunde con el context
         """
         self.test_connection()
 
-    @api.multi
     def test_connection(self, no_prompt=False):
         """ Ugly way we find to check the connection"""
         self.get_env()
@@ -319,7 +306,6 @@ class server(models.Model):
         raise ValidationError(_(
             'Connection successful!'))
 
-    @api.multi
     def add_images(self):
         actual_docker_images = [
             x.docker_image_id.id for x in self.server_docker_image_ids]
@@ -333,18 +319,15 @@ class server(models.Model):
             }
             self.server_docker_image_ids.create(vals)
 
-    @api.multi
     def configure_hosts(self):
         self.load_ssl_certficiates()
         self.add_to_virtual_domains()
 
-    @api.multi
     def load_ssl_certficiates(self):
         self.ensure_one()
         for domain in self.hostname_ids:
             domain.load_ssl_certficiate()
 
-    @api.multi
     def add_to_virtual_domains(self):
         self.ensure_one()
         self.get_env()
@@ -354,7 +337,6 @@ class server(models.Model):
                 domain.domain_regex,
                 use_sudo=True,)
 
-    @api.multi
     def show_passwd(self):
         self.ensure_one()
         raise except_orm(
@@ -362,7 +344,6 @@ class server(models.Model):
             _("%s") % self.password
         )
 
-    @api.multi
     def show_gdrive_passwd(self):
         self.ensure_one()
         raise except_orm(
@@ -370,7 +351,6 @@ class server(models.Model):
             _("%s") % self.gdrive_passw
         )
 
-    @api.multi
     def configure_gdrive_sync(self):
         self.get_env()
         if not self.gdrive_account or not self.gdrive_passw:
@@ -394,13 +374,11 @@ class server(models.Model):
             self.syncked_backups_path,
         ))
 
-    @api.multi
     def reboot_server(self):
         print 'received request to reboot '
         self.get_env()
         reboot()
 
-    @api.multi
     def restart_nginx(self):
         _logger.info("Restarting nginx")
         self.get_env()
@@ -410,7 +388,6 @@ class server(models.Model):
             raise ValidationError(
                 _('Could Not Restart Nginx! This is what we get: \n %s') % (e))
 
-    @api.multi
     def reload_nginx(self):
         _logger.info("Reloading nginx")
         self.get_env()
@@ -420,12 +397,10 @@ class server(models.Model):
             raise ValidationError(
                 _('Could Not Reload Nginx! This is what we get: \n %s') % (e))
 
-    @api.multi
     def action_to_draft(self):
         self.write({'state': 'draft'})
         return True
 
-    @api.multi
     def action_to_install(self):
         self.get_env()
         if self.server_configuration_id:
@@ -437,20 +412,16 @@ class server(models.Model):
                         print 'Command Result ', command_result
         self.write({'state': 'to_install'})
 
-    @api.multi
     def action_activate(self):
         self.write({'state': 'active'})
 
-    @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.multi
     def action_inactive(self):
         self.check_to_inactive()
         self.write({'state': 'inactive'})
 
-    @api.one
     def check_to_inactive(self):
         not_inactive_envs = self.environment_ids.filtered(
             lambda x: x.state != 'inactive')
@@ -460,7 +431,6 @@ class server(models.Model):
                 'environments to inactive first'))
         return True
 
-    @api.multi
     def copy_mailgate_file(self):
         self.get_env()
         local_mailgate_file = os.path.join(
@@ -489,7 +459,6 @@ class server(models.Model):
             return os.path.dirname(unicode(sys.executable, encoding))
         return os.path.dirname(unicode(__file__, encoding))
 
-    @api.multi
     def install_postfix(self):
         # def install_postfix(mailname):
         """
@@ -530,7 +499,6 @@ class server(models.Model):
         # Ensure the service is started
         started('postfix')
 
-    @api.multi
     def action_view_environments(self):
         '''
         This function returns an action that display a form or tree view
@@ -558,7 +526,6 @@ class server(models.Model):
             res['res_id'] = environments and environments.ids[0] or False
         return res
 
-    @api.multi
     def action_view_instances(self):
         '''
         This function returns an action that display a form or tree view
@@ -586,7 +553,6 @@ class server(models.Model):
             res['res_id'] = instances and instances.ids[0] or False
         return res
 
-    @api.multi
     def action_view_databases(self):
         '''
         This function returns an action that display a form or tree view

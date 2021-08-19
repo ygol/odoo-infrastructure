@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -83,7 +82,6 @@ class infrastructure_database_fix_wizard(models.TransientModel):
         self.modules_to_remove = (
             on_to_remove + not_installable + installed_uninstallable)
 
-    @api.multi
     def confirm(self):
         self.ensure_one()
         # if self.update_state not in [

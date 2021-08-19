@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -37,7 +36,6 @@ class infrastructure_database_backup_now_wizard(models.TransientModel):
         default=get_default_keep_till_date,
     )
 
-    @api.multi
     def confirm(self):
         self.ensure_one()
         active_id = self.env.context.get('active_id', False)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -33,7 +32,6 @@ class server_docker_image(models.Model):
             'Docker Image Must be Unique per server'),
     ]
 
-    @api.multi
     def pull_image(self, detached=False):
         """ Tuvimos que ponerle el context porque desde la vista lo pasa sin
         enmascararlo en self"""
@@ -50,6 +48,5 @@ class server_docker_image(models.Model):
         else:
             sudo('docker pull %s' % image_name)
 
-    @api.multi
     def pull_image_detached(self):
         self.pull_image(detached=True)

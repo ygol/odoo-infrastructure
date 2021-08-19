@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -84,21 +83,17 @@ class infrastructure_instance_update(models.Model):
     def change_user(self):
         self.notify_email = self.user_id.email
 
-    @api.multi
     def action_to_draft(self):
         self.write({'state': 'draft'})
 
-    @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.multi
     def action_confirm(self):
         if not self.detail_ids.filtered(lambda x: x.state == 'to_run'):
             raise ValidationError('There are no lines to run')
         self.write({'state': 'to_run'})
 
-    @api.multi
     def action_done(self):
         self.write({'state': 'done'})
 
@@ -114,7 +109,6 @@ class infrastructure_instance_update(models.Model):
             record.state = 'to_review'
         return True
 
-    @api.multi
     def update(self, commit=False):
         self.ensure_one()
         to_update = self.detail_ids.filtered(lambda x: x.state == 'to_run')
@@ -250,12 +244,10 @@ class infrastructure_instance_update_detail(models.Model):
         readonly=True,
     )
 
-    @api.multi
     def view_result(self):
         self.ensure_one()
         raise ValidationError(self.result)
 
-    @api.multi
     def action_open_instance(self):
         self.ensure_one()
         action = self.env['ir.model.data'].xmlid_to_object(

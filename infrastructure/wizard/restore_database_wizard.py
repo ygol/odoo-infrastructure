@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -82,7 +81,6 @@ class infrastructure_restore_database_wizard(models.TransientModel):
     #     if self.database_type_id:
     #         self.new_db_name = self.database_type_id.prefix + '_'
 
-    @api.multi
     def restore_database(self):
         self.ensure_one()
         overwrite = False

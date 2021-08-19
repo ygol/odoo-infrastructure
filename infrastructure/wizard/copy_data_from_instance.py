@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -38,7 +37,6 @@ class infrastructure_copy_data_from_instance(models.TransientModel):
         default=get_target_instance,
     )
 
-    @api.one
     @api.depends('target_instance_id')
     def get_server_and_source_instance(self):
         self.server_id = self.target_instance_id.server_id
@@ -52,7 +50,6 @@ class infrastructure_copy_data_from_instance(models.TransientModel):
         #         ('id', '!=', target_instance.id)],
         #     limit=1)
 
-    @api.multi
     def action_confirm(self):
         self.ensure_one()
         return self.target_instance_id.copy_databases_from(

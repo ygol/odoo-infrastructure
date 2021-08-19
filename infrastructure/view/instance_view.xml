@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.instance -->
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_instance_filter" model="ir.ui.view">
@@ -311,7 +310,6 @@
 <record id="action_infrastructure_instance_instances" model="ir.actions.act_window">
     <field name="name">Instances</field>
     <field name="res_model">infrastructure.instance</field>
-    <field name="view_type">form</field>
     <field name="view_mode">kanban,tree,form</field>
     <field name="view_id" ref="view_instance_kanban"/>
     <field name="search_view_id" ref="view_infrastructure_instance_filter"/>
@@ -328,5 +326,4 @@
     groups="group_user"
     />
 
-</data>
-</openerp>
+</odoo>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -69,7 +68,6 @@ class instance_host(models.Model):
             'Name must be unique per server!'),
     ]
 
-    @api.one
     @api.depends('prefix', 'server_hostname_id.name')
     def get_name(self):
         name = self.server_hostname_id.name

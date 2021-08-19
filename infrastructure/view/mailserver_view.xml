@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.mailserver -->
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <!-- <record id="view_infrastructure_mailserver_filter" model="ir.ui.view">
@@ -51,7 +50,6 @@
 <record id="action_infrastructure_mailserver_mail_servers" model="ir.actions.act_window">
     <field name="name">Mail Servers</field>
     <field name="res_model">infrastructure.mailserver</field>
-    <field name="view_type">form</field>
     <field name="view_mode">tree,form</field>
     <field name="view_id" ref=""/>
     <field name="search_view_id" ref=""/>
@@ -67,5 +65,4 @@
     groups="group_manager"
     />
 
-</data>
-</openerp>
+</odoo>

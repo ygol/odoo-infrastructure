@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-<data>
+<odoo>
 
 <record id="infrastructure_instance_update_form_view" model="ir.ui.view">
      <field name="name">Instances Update Form</field>
@@ -71,7 +70,6 @@
  <record id="action_infrastructure_instance_update" model="ir.actions.act_window">
     <field name="name">Instances Update</field>
     <field name="res_model">infrastructure.instance.update</field>
-    <field name="view_type">form</field>
 </record>
 
 <menuitem
@@ -82,5 +80,4 @@
     groups="group_user"
     />
 
-</data>
-</openerp>
+</odoo>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -15,7 +14,6 @@ class infrastructure_change_db_passwd_wizard(models.TransientModel):
     new_passwd = fields.Char(string='New Password', required=True)
     confirm_passwd = fields.Char(string='Confirm Password', required=True)
 
-    @api.one
     def change_db_passwd(self):
         active_ids = self.env.context.get('active_ids', False)
         databases = self.env['infrastructure.database'].browse(active_ids)

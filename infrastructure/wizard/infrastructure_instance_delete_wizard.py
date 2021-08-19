@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -32,7 +31,6 @@ class infrastructure_instance_delete_wizard(models.TransientModel):
         'Instance full name',
     )
 
-    @api.multi
     def confirm(self):
         self.ensure_one()
         # if instances is protected we can force, if db is protected it will

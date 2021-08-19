@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.command -->
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_command_filter" model="ir.ui.view">
@@ -46,5 +45,4 @@
     </field>
 </record>
 
-</data>
-</openerp>
+</odoo>

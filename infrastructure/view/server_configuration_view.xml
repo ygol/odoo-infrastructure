@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.server_configuration -->
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_server_configuration_filter" model="ir.ui.view">
@@ -49,7 +48,6 @@
 <record id="action_infrastructure_server_configuration_server_configurations" model="ir.actions.act_window">
     <field name="name">Server Configurations</field>
     <field name="res_model">infrastructure.server_configuration</field>
-    <field name="view_type">form</field>
     <field name="view_mode">tree,form</field>
     <field name="view_id" ref="view_infrastructure_server_configuration_tree"/>
     <field name="search_view_id" ref="view_infrastructure_server_configuration_filter"/>
@@ -65,5 +63,4 @@
     groups="group_manager"
     />
 
-</data>
-</openerp>
+</odoo>

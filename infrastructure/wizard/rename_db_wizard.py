@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -28,7 +27,6 @@ class infrastructure_rename_db_name(models.TransientModel):
     #         self.name = self.database_type_id.prefix + '_'
     # TODO send suggested backup data
 
-    @api.multi
     def action_confirm(self):
         active_id = self._context.get('active_id')
         if not active_id:

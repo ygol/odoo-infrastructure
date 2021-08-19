@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -60,7 +59,6 @@ class database(models.Model):
     ]
     _mail_post_access = 'read'
 
-    @api.multi
     def message_get_default_recipients(self):
         res = super(database, self).message_get_default_recipients()
         database_email_cc = self._context.get('database_email_cc', False)
@@ -330,7 +328,6 @@ class database(models.Model):
         store=True,
     )
 
-    @api.one
     @api.depends('name', 'instance_type_id.prefix')
     def _get_display_name(self):
         self.display_name = "%s (%s)" % (
@@ -356,11 +353,9 @@ class database(models.Model):
             db._cr.commit()
         return True
 
-    @api.one
     def restart_instance(self):
         self.instance_id.restart_all()
 
-    @api.one
     def refresh_overall_state(self):
         _logger.info('Checking database id: "%s"' % self.id)
         self.refresh_base_modules_state()
@@ -387,7 +382,6 @@ class database(models.Model):
             overall_state = 'error'
         self.overall_state = overall_state
 
-    @api.multi
     def clean_overall_state(self):
         self.write({
             'base_modules_state': False,
@@ -397,7 +391,6 @@ class database(models.Model):
 
     # TODO mejorar el codigo este de do_not_raise, hacerlo mucho mas siemple
     # se repite lo mismo en tres funciones distintas en distintos momentos
-    @api.multi
     def refresh_base_modules_state(self):
         self.ensure_one()
         do_not_raise = self._context.get('do_not_raise', False)
@@ -426,7 +419,6 @@ class database(models.Model):
             '*Installed modules: %s\n' % (
                 uninstalled_modules, base_modules, installed_modules))
 
-    @api.multi
     def refresh_backups_state(self):
         self.ensure_one()
         do_not_raise = self._context.get('do_not_raise', False)
@@ -489,7 +481,6 @@ class database(models.Model):
         self.backups_state_detail = detail
         return backups_state
 
-    @api.multi
     def refresh_update_state(self):
         self.ensure_one()
         do_not_raise = self._context.get('do_not_raise', False)
@@ -552,7 +543,6 @@ class database(models.Model):
         self.update_state_detail = detail
         return update_state
 
-    @api.multi
     def _get_signup_url(self, login):
         self.ensure_one()
         params = {
@@ -565,7 +555,6 @@ class database(models.Model):
             self.instance_id.main_hostname, 'login')
         return signup_url + '?' + urllib.urlencode(params)
 
-    @api.one
     def fix_db(self, uninstall_modules=True):
         """
         Method to be called from wizard or automatic
@@ -589,7 +578,6 @@ class database(models.Model):
         self.refresh_update_state()
         return True
 
-    @api.multi
     def reinit_modules(self, modules_names):
         """
         modules_names is a list of modules names to be reinit
@@ -620,14 +608,12 @@ class database(models.Model):
         # TODO mejorar esto y ver que el servicio este andando
         time.sleep(10)
 
-    @api.multi
     def install_base_modules(self):
         base_modules = self.env[
             'infrastructure.base.module'].search([]).mapped('name')
         self.install_modules(base_modules)
         self.refresh_base_modules_state()
 
-    @api.multi
     def install_modules(self, modules_names):
         """
         modules_names is a list of modules names to be upgraded
@@ -636,7 +622,6 @@ class database(models.Model):
         client = self.get_client()
         client.install(*modules_names)
 
-    @api.multi
     def upgrade_modules(self, modules_names):
         """
         modules_names is a list of modules names to be upgraded
@@ -645,7 +630,6 @@ class database(models.Model):
         client = self.get_client()
         client.upgrade(*modules_names)
 
-    @api.multi
     def update_module_list(self):
         """
         modules_names is a list of modules names to be upgraded
@@ -653,7 +637,6 @@ class database(models.Model):
         client = self.get_client()
         client.model('ir.module.module').update_list()
 
-    @api.multi
     def check_module_version(self, module_name, version, operator_string):
         database_ids = []
         version = parse_version(version)
@@ -679,7 +662,6 @@ class database(models.Model):
                     database_ids.append(database.id)
         return self.browse(database_ids)
 
-    @api.one
     @api.depends('state')
     def get_color(self):
         color = 4
@@ -703,7 +685,6 @@ class database(models.Model):
             self.alias_hostname_id = main_hostname.server_hostname_id
             self.alias_prefix = main_hostname.prefix
 
-    @api.one
     @api.depends(
         'instance_id.main_hostname',
         'instance_id.db_filter.add_bd_name_to_host'
@@ -717,7 +698,6 @@ class database(models.Model):
             )
         self.main_hostname = main_hostname
 
-    @api.one
     @api.depends(
         'alias_prefix', 'alias_hostname_id', 'alias_hostname_id.wildcard')
     def get_domain_alias(self):
@@ -729,7 +709,6 @@ class database(models.Model):
             domain_alias += self.alias_hostname_id.name
         self.domain_alias = domain_alias
 
-    @api.one
     @api.depends('instance_id')
     def get_mailgate_path(self):
         """We use this function because perhups in future you need to use one
@@ -738,7 +717,6 @@ class database(models.Model):
         mailgate_path = self.server_id.mailgate_file
         self.mailgate_path = mailgate_path
 
-    @api.one
     @api.depends('virtual_alias', 'local_alias', 'instance_id')
     def get_aliases(self):
         virtual_alias = False
@@ -768,7 +746,6 @@ class database(models.Model):
             'Database Name Must be Unique per instance'),
     ]
 
-    @api.one
     def unlink(self):
         if self.state not in ('draft', 'cancel'):
             raise ValidationError(_(
@@ -820,7 +797,6 @@ class database(models.Model):
         self.deactivation_date = deactivation_date
         self.drop_date = drop_date
 
-    @api.one
     def show_passwd(self):
         raise except_orm(
             _("Password:"),
@@ -829,7 +805,6 @@ class database(models.Model):
 
 # DATABASE CRUD
 
-    @api.multi
     def get_sock(self, service='db', max_attempts=5):
         self.ensure_one()
         base_url = self.instance_id.main_hostname
@@ -864,7 +839,6 @@ class database(models.Model):
                 _("Could not connect to socket '%s'") % (rpc_db_url))
         return sock
 
-    @api.one
     def create_db(self):
         """Funcion que utliza erpeek para crear bds"""
         _logger.info("Creating db '%s'" % (self.name))
@@ -893,7 +867,6 @@ class database(models.Model):
         self.config_backups()
         self.action_activate()
 
-    @api.one
     @api.depends('advance_type', 'protect_till_date')
     def _compute_database_protected(self):
         protected = False
@@ -904,7 +877,6 @@ class database(models.Model):
             protected = True
         self.protected = protected
 
-    @api.multi
     def drop_db(self):
         """Funcion que utiliza ws nativos de odoo para eliminar db"""
         self.ensure_one()
@@ -932,7 +904,6 @@ class database(models.Model):
                     'restarting service. This is what we get:\n%s') % (e))
         self.action_cancel()
 
-    @api.one
     def backup_now(
             self, name=False, keep_till_date=False, backup_format='zip'):
         client = self.get_client()
@@ -959,7 +930,6 @@ class database(models.Model):
             # raise ValidationError(_(
             # 'Backup %s succesfully created!' % bd_result['backup_name']))
 
-    @api.one
     def migrate_db(self):
         """Funcion que utiliza ws nativos de odoo para hacer update de bd"""
         _logger.info("Migrating db '%s'" % (self.name))
@@ -973,7 +943,6 @@ class database(models.Model):
                 'instance with "workers" then you can try '
                 'restarting service. This is what we get:\n%s') % (e))
 
-    @api.one
     def rename_db(self, new_name):
         """Funcion que utiliza ws nativos de odoo para hacer update de bd"""
         _logger.info("Rennaming db '%s' to '%s'" % (self.name, new_name))
@@ -999,7 +968,6 @@ class database(models.Model):
         if self.backups_enable:
             self.config_backups()
 
-    @api.one
     def exist_db(self, database_name):
         """Funcion que utiliza ws nativos de odoo"""
         sock = self.get_sock()
@@ -1056,7 +1024,6 @@ class database(models.Model):
                 db_name, e))
         return True
 
-    @api.multi
     def duplicate_db(self, new_database_name, backups_enable):
         """Funcion que utiliza ws nativos de odoo para hacer duplicar bd"""
         self.ensure_one()
@@ -1094,7 +1061,6 @@ class database(models.Model):
         return res
 
     # TODO ver si borramos esta Funcion vieja que usaba el kill de odoo tools
-    # @api.one
     # def duplicate_db(self, new_database_name, backups_enable):
     #     """Funcion que utiliza ws nativos de odoo para hacer duplicar bd"""
     #     client = self.get_client()
@@ -1116,13 +1082,11 @@ class database(models.Model):
     #     new_db.action_activate()
     #     # TODO retornar accion de ventana a la bd creada
 
-    @api.multi
     def get_version(self):
         """Funcion que utiliza ws nativos de odoo"""
         sock = self.get_sock('common')
         return sock.version()
 
-    @api.one
     def kill_db_connection(self):
         client = self.get_client()
         self.server_id.get_env()
@@ -1138,7 +1102,6 @@ class database(models.Model):
         client.model('db.database').drop_con(self_db_id)
 
 # Database connection helper
-    @api.multi
     def get_client_attempts(self, not_database=False, attempts=20):
         self.ensure_one()
         _logger.info('Getting client with attempts %s' % attempts)
@@ -1154,7 +1117,6 @@ class database(models.Model):
             else:
                 raise ValidationError('asda %s' % e)
 
-    @api.multi
     def get_client(self, not_database=False):
         self.ensure_one()
         try:
@@ -1189,7 +1151,6 @@ class database(models.Model):
 
 # Backups management
 
-    @api.one
     def update_backups_data(self):
         client = self.get_client()
         modules = ['database_tools']
@@ -1234,7 +1195,6 @@ class database(models.Model):
         self.backup_ids.search([('name', 'in', removed_backups)]).unlink()
 
 # Modules management
-    @api.multi
     def upload_partners_uuid(self):
         self.ensure_one()
         client = self.get_client()
@@ -1263,7 +1223,6 @@ class database(models.Model):
                 client.model('res.users').write(remote_user_id, {
                     'remote_partner_uuid': support_uuid})
 
-    @api.multi
     def update_users_data(self):
         self.ensure_one()
         client = self.get_client()
@@ -1297,7 +1256,6 @@ class database(models.Model):
         return True
 
 # MAIL server and catchall configurations
-    @api.one
     def upload_mail_server_config(self):
         if not self.smtp_server_id:
             raise ValidationError(_(
@@ -1335,7 +1293,6 @@ class database(models.Model):
                 _('Error: %s') % e
             )
 
-    @api.multi
     def action_change_admin_passwd(self):
         for rec in self:
             new_passwd = rec.instance_type_id.get_password()
@@ -1346,7 +1303,6 @@ class database(models.Model):
             # if rec.catchall_enable:
             #     rec.config_catchall()
 
-    @api.one
     def change_admin_passwd(self, current_passwd, new_passwd):
         client = self.get_client()
         try:
@@ -1359,7 +1315,6 @@ class database(models.Model):
                 _('Error: %s') % e
             )
 
-    @api.one
     def config_backups(self):
         self.server_id.get_env()
         client = self.get_client()
@@ -1390,7 +1345,6 @@ class database(models.Model):
         client.model('db.database').backups_state(
             self.name, self.backups_enable)
 
-    @api.one
     def config_catchall(self):
         self.server_id.get_env()
         client = self.get_client()
@@ -1438,24 +1392,19 @@ class database(models.Model):
         sudo('newaliases')
         sudo('/etc/init.d/postfix restart')
 
-    @api.multi
     def action_to_draft(self):
         self.write({'state': 'draft'})
         return True
 
-    @api.multi
     def action_activate(self):
         self.write({'state': 'active'})
 
-    @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.multi
     def action_inactive(self):
         self.write({'state': 'inactive'})
 
-    @api.multi
     def init_dbuuid(self):
         for rec in self:
             client = rec.get_client_attempts()

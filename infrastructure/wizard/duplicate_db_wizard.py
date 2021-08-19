@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -45,7 +44,6 @@ class infrastructure_duplicate_db_wizard(models.TransientModel):
     #         self.new_db_name = self.database_type_id.prefix + '_'
     # TODO send suggested backup data
 
-    @api.one
     def duplicate_db(self):
         # TODO implementar si hay cambio de usuario
         if self.change_user:

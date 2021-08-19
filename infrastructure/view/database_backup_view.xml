@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.database.backup -->
-<openerp>
-<data>
+<odoo>
 
 <!-- FORM VIEW -->
 <record id="view_infrastructure_database_backup_form" model="ir.ui.view">
@@ -62,5 +61,4 @@
     </field>
 </record>
 
-</data>
-</openerp>
+</odoo>

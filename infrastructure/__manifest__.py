@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Copyright (C) 2015  ADHOC SA  (http://www.adhoc.com.ar)
@@ -20,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Odoo Infrastructure Management',
-    'version': '9.0.1.4.0',
+    'version': "11.0.1.0.0",
     'category': 'base.module_category_knowledge_management',
     'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',

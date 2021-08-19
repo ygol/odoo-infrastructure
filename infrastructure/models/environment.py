@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -124,7 +123,6 @@ class environment(models.Model):
         store=True,
     )
 
-    @api.one
     @api.depends('name', 'description')
     def _compute_display_name(self):
         display_name = self.name
@@ -132,7 +130,6 @@ class environment(models.Model):
             display_name += ' - %s' % self.description
         self.display_name = display_name
 
-    @api.one
     @api.depends('state')
     def get_color(self):
         color = 4
@@ -144,23 +141,19 @@ class environment(models.Model):
             color = 3
         self.color = color
 
-    @api.one
     @api.depends('database_ids')
     def _get_databases(self):
         self.database_count = len(self.database_ids)
 
-    @api.one
     @api.depends('instance_ids')
     def _get_instances(self):
         self.instance_count = len(self.instance_ids)
 
-    @api.one
     @api.constrains('number')
     def _check_number(self):
         if not self.number or self.number < 10 or self.number > 99:
             raise ValidationError(_('Number should be between 10 and 99'))
 
-    @api.one
     def unlink(self):
         if self.state not in ('draft', 'cancel'):
             raise ValidationError(_(
@@ -177,7 +170,6 @@ class environment(models.Model):
             self.partner_id = self.server_id.used_by_id
         self.number = environments and environments[0].number + 1 or 10
 
-    @api.multi
     def get_new_instance_number(self):
         # TODO estos numbers es por una limitacion de que usamos puertos ahora
         # pero que vamos a depreciar mas adelante
@@ -211,7 +203,6 @@ class environment(models.Model):
             path = os.path.join(self.server_id.base_path, self.name)
         self.path = path
 
-    @api.one
     def make_env_paths(self):
         self.server_id.get_env()
         if exists(self.path, use_sudo=True):
@@ -219,12 +210,10 @@ class environment(models.Model):
                           (self.path))
         sudo('mkdir -p ' + self.path)
 
-    @api.multi
     def create_environment(self):
         self.make_env_paths()
         self.action_activate()
 
-    @api.one
     def check_to_inactive(self):
         for instance in self.instance_ids:
             if instance.service_type != 'no_service':
@@ -234,7 +223,6 @@ class environment(models.Model):
                     ' if you stop all of them'))
         return True
 
-    @api.multi
     def delete(self):
         if self.instance_ids:
             raise ValidationError(_(
@@ -245,7 +233,6 @@ class environment(models.Model):
             sudo('rm -f -r ' + path)
         self.action_cancel()
 
-    @api.multi
     def action_activate(self):
         for environment in self:
             if environment.server_id.state == 'inactive':
@@ -259,18 +246,15 @@ class environment(models.Model):
 
         self.write({'state': 'active'})
 
-    @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.multi
     def action_inactive(self):
         self.check_to_inactive()
         for environment in self:
             environment.instance_ids.action_inactive()
         self.write({'state': 'inactive'})
 
-    @api.multi
     def action_to_draft(self):
         self.write({'state': 'draft'})
 
@@ -283,7 +267,6 @@ class environment(models.Model):
             'Number must be unique per server!'),
     ]
 
-    @api.multi
     def action_view_instances(self):
         '''
         This function returns an action that display a form or tree view
@@ -311,7 +294,6 @@ class environment(models.Model):
             res['res_id'] = instances and instances.ids[0] or False
         return res
 
-    @api.multi
     def action_view_databases(self):
         '''
         This function returns an action that display a form or tree view

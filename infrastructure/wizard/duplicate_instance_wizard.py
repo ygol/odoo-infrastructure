@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -71,7 +70,6 @@ class infrastructure_duplicate_instance_wizard(models.TransientModel):
         #         limit=1
         # )
 
-    @api.multi
     def action_confirm(self):
         self.ensure_one()
         return self.source_instance_id.duplicate(

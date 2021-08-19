@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -154,7 +153,6 @@ class database_type(models.Model):
         else:
             self.check_database = False
 
-    @api.multi
     def get_password(self):
         self.ensure_one()
         # TODO depreciar db_admin_pass e instance_admin_pass que ya no los

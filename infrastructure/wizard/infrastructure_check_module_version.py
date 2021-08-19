@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -27,12 +26,10 @@ class infrastructure_check_module_version_wizard(models.TransientModel):
         default='<',
     )
 
-    @api.multi
     def test(self):
         raise ValidationError(_('Databases: %s') % (
             ', '.join(self.get_databases().mapped('name'))))
 
-    @api.multi
     def confirm(self):
         databases = self.get_databases()
         if not databases:
@@ -50,7 +47,6 @@ class infrastructure_check_module_version_wizard(models.TransientModel):
             res['res_id'] = databases.ids
         return res
 
-    @api.multi
     def get_databases(self):
         self.ensure_one()
         databases = self.env['infrastructure.database'].browse(

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_database_filter" model="ir.ui.view">
@@ -313,7 +312,6 @@
 <record id="action_infrastructure_database_databases" model="ir.actions.act_window">
     <field name="name">Databases</field>
     <field name="res_model">infrastructure.database</field>
-    <field name="view_type">form</field>
     <field name="view_mode">kanban,tree,form</field>
     <field name="view_id" ref="view_database_kanban"/>
     <field name="search_view_id" ref="view_infrastructure_database_filter"/>
@@ -324,7 +322,6 @@
 <record id="action_infrastructure_databases_to_correct" model="ir.actions.act_window">
     <field name="name">Databases To Correct</field>
     <field name="res_model">infrastructure.database</field>
-    <field name="view_type">form</field>
     <field name="view_mode">kanban,tree,form</field>
     <field name="view_id" ref="view_database_kanban"/>
     <field name="search_view_id" ref="view_infrastructure_database_filter"/>
@@ -362,5 +359,4 @@
     groups="group_manager"
     />
 
-</data>
-</openerp>
+</odoo>

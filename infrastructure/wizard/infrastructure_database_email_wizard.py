@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -26,7 +25,6 @@ class infrastructure_database_email_wizard(models.TransientModel):
         required=False,
     )
 
-    @api.multi
     def send_mail(self, auto_commit=False):
         self.ensure_one()
         return super(infrastructure_database_email_wizard, self.with_context(

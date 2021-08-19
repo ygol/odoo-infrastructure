@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-<data>
+<odoo>
 
 <record id="infrastructure_check_module_version_wizard_view" model="ir.ui.view">
      <field name="name">Check Module Version</field>
@@ -26,12 +25,11 @@
 <act_window
     name="Check Modules Version"
     res_model="infrastructure.check.module.version.wizard"
-    src_model="infrastructure.database"
+    binding_model="infrastructure.database"
     view_mode="form"
     target="new"
     context="{}"
     key2="client_action_multi"
     id="action_infrastructure_check_module_version_wizard"/>
         
-</data>
-</openerp>
+</odoo>

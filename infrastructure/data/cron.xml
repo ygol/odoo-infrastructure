@@ -53,5 +53,4 @@
             <field eval="1" name="active"/>
             <field eval="1" name="interval_number"/>
         </record>
-</data>
-</openerp>
+</odoo>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -44,12 +43,10 @@ class database_user(models.Model):
             'Login must be unique per database'),
     ]
 
-    @api.multi
     def _compute_signup_url(self):
         for rec in self:
             rec.signup_url = rec.database_id._get_signup_url(rec.login)
 
-    @api.multi
     def open_signup_url(self):
         self.ensure_one()
         return {

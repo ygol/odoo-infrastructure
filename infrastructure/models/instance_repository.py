@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -76,7 +75,6 @@ class instance_repository(models.Model):
             'Repository Must be Unique per Ìnstance'),
     ]
 
-    @api.one
     @api.depends('instance_id.sources_path', 'repository_id.directory')
     def get_path(self):
         self.path = os.path.join(
@@ -93,7 +91,6 @@ class instance_repository(models.Model):
         if default_branch_id and default_branch_id in repo_branch_ids:
             self.branch_id = default_branch_id
 
-    @api.one
     def unlink(self):
         if self.actual_commit:
             raise ValidationError(_(
@@ -101,13 +98,11 @@ class instance_repository(models.Model):
                 'You should first delete it with the delete button.'))
         return super(instance_repository, self).unlink()
 
-    @api.multi
     def action_repository_pull_clone_and_checkout(self):
         # TODO view is not refreshing
         self.repository_pull_clone_and_checkout()
         self.instance_id.check_instance_and_bds()
 
-    @api.multi
     def action_delete(self):
         self.instance_id.environment_id.server_id.get_env()
         try:
@@ -119,7 +114,6 @@ class instance_repository(models.Model):
                 'Error Removing Folder %s. This is what we get:\n'
                 '%s' % (self.path, e)))
 
-    @api.multi
     def action_pull_source_and_active(self):
         """This method is used from instance that clone repositories from other
         instance, with this method, first source repository is pulled, then
@@ -145,7 +139,6 @@ class instance_repository(models.Model):
         self.repository_pull_clone_and_checkout()
         self.instance_id.check_instance_and_bds()
 
-    @api.one
     def repository_pull_clone_and_checkout(self, update=True):
         _logger.info("Updateing/getting repository %s with update=%s" % (
             self.repository_id.name, update))

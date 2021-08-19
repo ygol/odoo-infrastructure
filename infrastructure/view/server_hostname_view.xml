@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.server_hostname -->
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_server_hostname_filter" model="ir.ui.view">
@@ -67,7 +66,6 @@
 <record id="action_infrastructure_server_hostname" model="ir.actions.act_window">
     <field name="name">Server Hostnames</field>
     <field name="res_model">infrastructure.server_hostname</field>
-    <field name="view_type">form</field>
     <field name="view_mode">tree,form</field>
     <field name="view_id" ref="view_infrastructure_server_hostname_tree"/>
     <field name="search_view_id" ref="view_infrastructure_server_hostname_filter"/>
@@ -83,5 +81,4 @@
     groups="group_manager"
     />
 
-</data>
-</openerp>
+</odoo>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -51,12 +50,10 @@ class database_backup(models.Model):
         compute='get_full_path',
     )
 
-    @api.one
     @api.depends('path', 'name')
     def get_full_path(self):
         self.full_path = os.path.join(self.path, self.name)
 
-    @api.multi
     def delete_backup(self):
         self.ensure_one()
         client = self.database_id.get_client()
@@ -73,7 +70,6 @@ class database_backup(models.Model):
         # return self.database_id.update_backups_data()
         # # return self.unlink()
 
-    @api.multi
     def get_backup_msg(self):
         self.ensure_one()
         raise ValidationError(_(
@@ -81,14 +77,12 @@ class database_backup(models.Model):
             self.backup_cmd,
             self.database_id.server_id.password))
 
-    @api.one
     def get_backup_cmd(self):
         server = self.database_id.server_id
         self.backup_cmd = 'scp -P %s %s@%s:%s .' % (
             server.ssh_port, server.user_name,
             server.main_hostname, self.full_path)
 
-    @api.multi
     def restore(
             self, instance, db_name,
             backups_enable, overwrite=False):

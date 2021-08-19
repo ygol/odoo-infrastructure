@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -34,7 +33,6 @@ class server_hostname(models.Model):
     ssl_certificate_path = fields.Char(string='SSL Certificate', compute='get_certificate_paths')
     ssl_certificate_key_path = fields.Char(string='SSL Certificate', compute='get_certificate_paths')
 
-    @api.one
     @api.depends('name')
     def get_certificate_paths(self):
         name = self.name
@@ -75,7 +73,6 @@ class server_hostname(models.Model):
             res.append((record['id'], name))
         return res
 
-    @api.one
     def load_ssl_certficiate(self):
         self.server_id.get_env()
         if not self.ssl_available:

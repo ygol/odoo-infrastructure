@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -30,13 +29,11 @@ class instance_update_add_instances(models.TransientModel):
         string='Instances',
     )
 
-    @api.one
     @api.depends('update_id')
     def get_actual_instances(self):
         self.actual_instance_ids = self.update_id.detail_ids.mapped(
             'instance_id')
 
-    @api.multi
     def confirm(self):
         self.ensure_one()
         for instance in self.instance_ids:

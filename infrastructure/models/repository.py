@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -67,7 +66,6 @@ class repository(models.Model):
         'repository, this message will be displayed and pull will be aborted'
     )
 
-    @api.one
     @api.depends('directory', 'addons_subdirectory')
     def _get_addons_path(self):
         self.addons_path = os.path.join(

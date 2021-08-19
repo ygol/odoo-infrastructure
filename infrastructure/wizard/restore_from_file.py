@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -35,7 +34,6 @@ class infrastructure_restore_from_file_wizard(models.TransientModel):
         required=True,
     )
 
-    @api.multi
     def action_confirm(self):
         self.ensure_one()
         self.database_id.server_id.get_env()

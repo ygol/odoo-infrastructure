@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- infrastructure.odoo_version -->
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_odoo_version_filter" model="ir.ui.view">
@@ -51,7 +50,6 @@
 <record id="action_infrastructure_odoo_version_odoo_versions" model="ir.actions.act_window">
     <field name="name">Odoo Versions</field>
     <field name="res_model">infrastructure.odoo_version</field>
-    <field name="view_type">form</field>
     <field name="view_mode">tree,form</field>
     <field name="view_id" ref="view_infrastructure_odoo_version_tree"/>
     <field name="search_view_id" ref="view_infrastructure_odoo_version_filter"/>
@@ -67,5 +65,4 @@
     groups="group_manager"
     />
 
-</data>
-</openerp>
+</odoo>

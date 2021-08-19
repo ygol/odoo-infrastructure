@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-<data>
+<odoo>
 
 <!-- SEARCH VIEW -->
 <record id="view_infrastructure_server_filter" model="ir.ui.view">
@@ -324,7 +323,6 @@
 <record id="action_infrastructure_server_servers" model="ir.actions.act_window">
     <field name="name">Servers</field>
     <field name="res_model">infrastructure.server</field>
-    <field name="view_type">form</field>
     <field name="view_mode">kanban,tree,form</field>
     <field name="view_id" ref="view_server_kanban"/>
     <field name="search_view_id" ref="view_infrastructure_server_filter"/>
@@ -341,5 +339,4 @@
     groups="group_user"
     />
 
-</data>
-</openerp>
+</odoo>

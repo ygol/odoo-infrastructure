@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -160,7 +159,6 @@ class instance(models.Model):
             'Name must be unique per environment!'),
     ]
 
-    @api.one
     @api.depends('state')
     def get_color(self):
         color = 4
@@ -172,12 +170,10 @@ class instance(models.Model):
             color = 3
         self.color = color
 
-    @api.one
     @api.depends('environment_id.odoo_version_id.name')
     def get_odoo_version(self):
         self.odoo_version = self.environment_id.odoo_version_id.name
 
-    @api.one
     @api.depends('database_type_id')
     def get_sources_from(self):
         sources_from_id = False
@@ -189,13 +185,11 @@ class instance(models.Model):
                 ], limit=1)
         self.sources_from_id = sources_from_id
 
-    # @api.one
     # def refresh_dbs_update_state(self):
     #     for database in self.database_ids:
     #         database.refresh_update_state()
     #     self.refresh_instance_update_state()
 
-    @api.multi
     def action_change_password(self):
         for rec in self:
             client = Client(rec.main_hostname)
@@ -207,7 +201,6 @@ class instance(models.Model):
             for db in rec.database_ids.filtered(lambda x: x.catchall_enable):
                 db.config_catchall()
 
-    @api.one
     @api.depends('database_ids.update_state')
     def get_databases_state(self):
         databases_state = 'ok'
@@ -228,7 +221,6 @@ class instance(models.Model):
         self.databases_state = databases_state
 
     # TODO remove
-    # @api.one
     # def refresh_instance_update_state(self):
     #     databases_state = 'ok'
     #     dbs_update_states = self.mapped('database_ids.update_state')
@@ -247,7 +239,6 @@ class instance(models.Model):
     #             databases_state = 'actions_required'
     #     self.databases_state = databases_state
 
-    @api.one
     @api.depends('server_id')
     def _get_main_hostname(self):
         main_host = self.instance_host_ids.filtered(
@@ -263,7 +254,6 @@ class instance(models.Model):
             self.main_hostname = main_hostname
             self.main_hostname_id = main_host[0].id
 
-    @api.one
     @api.depends('server_id')
     def _get_docker_images(self):
         self.docker_image_ids = self.env['infrastructure.docker_image']
@@ -271,7 +261,6 @@ class instance(models.Model):
             x.docker_image_id.id for x in (
                 self.server_id.server_docker_image_ids)]
     
-    @api.one
     @api.depends(
         'database_type_id.prefix',
         'environment_id.name',
@@ -300,7 +289,6 @@ class instance(models.Model):
             else:
                 self.workers = self.database_type_id.workers_number
 
-    @api.one
     @api.depends('name')
     def get_container_names(self):
         if self.name:
@@ -308,30 +296,25 @@ class instance(models.Model):
             self.odoo_container = 'odoo-' + container_name_suffix
             self.pg_container = 'db-' + container_name_suffix
 
-    @api.multi
     def show_passwd(self):
         raise except_orm(
             _("Password for user"),
             _("%s") % self.admin_pass
         )
 
-    @api.multi
     def action_check_databases(self):
         raise ValidationError('Not implemented yet')
         # return self.database_ids.xx
 
-    @api.multi
     def action_activate(self):
         # send to draft dbs that are inactive
         self.mapped('database_ids').filtered(
             lambda x: x.state == 'inactive').action_to_draft()
         self.write({'state': 'active'})
 
-    @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
 
-    @api.multi
     def action_inactive(self):
         for instance in self:
             # borramos los containers
@@ -341,18 +324,15 @@ class instance(models.Model):
         # marcamos desactivada la instancia
         self.write({'state': 'inactive'})
 
-    @api.multi
     def action_to_draft(self):
         self.write({'state': 'draft'})
         return True
 
-    @api.one
     @api.constrains('number')
     def _check_number(self):
         if not self.number or self.number < 1 or self.number > 9:
             raise ValidationError(_('Number should be between 1 and 9'))
 
-    @api.one
     def unlink(self):
         if self.state not in ('draft', 'cancel'):
             raise ValidationError(_(
@@ -361,7 +341,6 @@ class instance(models.Model):
         return super(instance, self).unlink()
 
 # Calculated fields
-    @api.one
     @api.depends(
         'environment_id',
         'odoo_image_id.odoo_server_wide_modules',
@@ -380,12 +359,10 @@ class instance(models.Model):
                 (self.odoo_image_id.odoo_server_wide_modules or '') +
                 (module_load or ''))
 
-    @api.one
     @api.depends('database_ids')
     def _get_databases(self):
         self.database_count = len(self.database_ids)
 
-    @api.one
     def check_instance_and_bds(self):
         self.write({
             'odoo_service_state': 'restart_required',
@@ -403,13 +380,11 @@ class instance(models.Model):
         # print 'use_from_instances', use_from_instances
         # if use_from_instances:
 
-    @api.multi
     def repositories_pull_clone_and_checkout(self):
         self.instance_repository_ids.repository_pull_clone_and_checkout(
             update=True)
         self.check_instance_and_bds()
 
-    @api.multi
     def add_repositories(self):
         _logger.info("Adding Repositories")
         # if sources from another instance we dont add any repository
@@ -434,7 +409,6 @@ class instance(models.Model):
                 }
                 self.instance_repository_ids.create(vals)
 
-    @api.one
     @api.depends(
         'instance_repository_ids.repository_id.addons_path',
         'sources_type',
@@ -493,7 +467,6 @@ class instance(models.Model):
         else:
             self.pg_image_tag_id = False
 
-    @api.one
     @api.depends('name', 'number', 'environment_id')
     def _get_ports_and_paths(self):
         xml_rpc_port = False
@@ -566,7 +539,6 @@ class instance(models.Model):
         self.data_dir = data_dir
 
 # Actions
-    @api.one
     def check_protection(self):
         """
         Generic function used to ask if we can delete or overwrite an instance
@@ -584,7 +556,6 @@ class instance(models.Model):
                 'Action Forbiden! Databases %s are protected!' % (
                     protected_dbs.ids)))
 
-    @api.multi
     def delete(self):
         _logger.info("Deleting Instance")
         self.check_protection()
@@ -596,7 +567,6 @@ class instance(models.Model):
         self.delete_paths()
         self.action_cancel()
 
-    @api.multi
     def create_instance(self):
         _logger.info("Creating Instance")
         self.make_paths()
@@ -616,7 +586,6 @@ class instance(models.Model):
         self.run_odoo_service()
         self.action_activate()
     
-    @api.one
     def get_commands(self):
 
         pg_volume_links = (
@@ -755,7 +724,6 @@ class instance(models.Model):
         self.odoo_log_cmd = 'tail -f %s' % self.logfile
         self.pg_log_cmd = 'docker logs -f %s' % self.pg_container
 
-    @api.multi
     def get_tunnel_to_pg(self):
         self.ensure_one()
         server = self.server_id
@@ -772,7 +740,6 @@ class instance(models.Model):
             '*Port: 5499\n'
             '*Usarname and pass: odoo') % (tunnel_to_pg, server.password))
 
-    @api.multi
     def get_update_conf_command_sufix(self):
         self.ensure_one()
         command = ' --stop-after-init -s'
@@ -809,13 +776,11 @@ class instance(models.Model):
 
         return command
 
-    @api.multi
     def delete_paths(self):
         _logger.info("Deleting path and subpath of: %s " % self.base_path)
         self.environment_id.server_id.get_env()
         sudo('rm -r %s' % self.base_path, dont_raise=True)
 
-    @api.multi
     def add_hostname(self):
         """
         Try to find a wildcard domain and add it. If exist, return true, else
@@ -844,7 +809,6 @@ class instance(models.Model):
             return True
         return False
 
-    @api.multi
     def duplicate(self, environment, database_type, sufix=False):
         self.ensure_one()
         _logger.info('Duplicating Intance')
@@ -941,7 +905,6 @@ class instance(models.Model):
         res['res_id'] = new_instance.id
         return res
 
-    @api.one
     def copy_databases_from(self, instance):
         # TODO implement overwrite
         self.check_protection()
@@ -1006,14 +969,12 @@ class instance(models.Model):
             #     self.database_type_id.prefix, new_db.name))
             # new_db.config_backups()
 
-    @api.one
     def databases_update_all(self):
         self.remove_odoo_service()
         for database in self.database_ids:
             sudo('%s -d %s' % (self.update_all_cmd, database.name))
         self.run_odoo_service()
 
-    @api.multi
     def make_paths(self):
         """ Creamos todo los paths con 777 salvo el de posgreses que dejamos
         que se cree solo porque si no no anda por ser inseguro
@@ -1034,7 +995,6 @@ class instance(models.Model):
             _logger.info(("Creating path '%s'") % (path))
             sudo('mkdir -m 777 -p ' + path)
 
-    @api.one
     def update_conf_file(self):
         use_aeroo_docs = False
         _logger.info("Updating conf file")
@@ -1109,27 +1069,22 @@ class instance(models.Model):
             if self.server_id.afip_prod_cert_file:
                 sed(self.conf_file_path, '(afip_prod_cert_file).*', 'afip_prod_cert_file = ' + self.server_id.afip_prod_cert_file, use_sudo=True)
 
-    @api.one
     def run_all(self):
         self.run_pg_service()
         self.run_odoo_service()
 
-    @api.one
     def restart_all(self):
         self.restart_pg_service()
         self.restart_odoo_service()
 
-    @api.one
     def remove_all(self):
         self.remove_odoo_service()
         self.remove_pg_service()
 
-    @api.one
     def stop_all(self):
         self.stop_odoo_service()
         self.stop_pg_service()
 
-    @api.one
     def run_odoo_service(self):
         if self.odoo_container:
             self.environment_id.server_id.get_env()
@@ -1138,7 +1093,6 @@ class instance(models.Model):
             if self.odoo_service_state == 'restart_required':
                 self.odoo_service_state = 'ok'
 
-    @api.one
     def restart_odoo_service(self):
         if self.odoo_container:
             self.environment_id.server_id.get_env()
@@ -1147,7 +1101,6 @@ class instance(models.Model):
             if self.odoo_service_state == 'restart_required':
                 self.odoo_service_state = 'ok'
 
-    @api.one
     def remove_odoo_service(self):
         if self.odoo_container:
             # first stop
@@ -1160,7 +1113,6 @@ class instance(models.Model):
                 _logger.warning(("Could remove container '%s'") % (
                     self.name))
 
-    @api.one
     def stop_odoo_service(self):
         if self.odoo_container:
             self.environment_id.server_id.get_env()
@@ -1171,7 +1123,6 @@ class instance(models.Model):
                 _logger.warning(("Could stop container '%s'") % (
                     self.stop_odoo_cmd))
 
-    @api.one
     def run_pg_service(self):
         if self.pg_container:
             self.environment_id.server_id.get_env()
@@ -1179,20 +1130,17 @@ class instance(models.Model):
             sudo(self.run_pg_cmd)
 
     # depreciated, use restart instead
-    # @api.one
     # def start_pg_service(self):
     #     self.environment_id.server_id.get_env()
     #     _logger.info("Starting Postgresql Service %s" % self.name)
     #     sudo(self.start_pg_cmd)
 
-    @api.one
     def restart_pg_service(self):
         if self.pg_container:
             self.environment_id.server_id.get_env()
             _logger.info("Restarting Postgresql Service %s" % self.name)
             sudo(self.restart_pg_cmd)
 
-    @api.one
     def remove_pg_service(self):
         if self.pg_container:
             # first stop
@@ -1205,7 +1153,6 @@ class instance(models.Model):
                 _logger.warning(("Could remove container '%s'") % (
                     self.name))
 
-    @api.one
     def stop_pg_service(self):
         if self.pg_container:
             self.environment_id.server_id.get_env()
@@ -1216,7 +1163,6 @@ class instance(models.Model):
                 _logger.warning(("Could stop container '%s'") % (
                     self.stop_pg_cmd))
 
-    @api.one
     def delete_nginx_site(self):
         _logger.info("Deleting conf file")
         self.environment_id.server_id.get_env()
@@ -1233,7 +1179,6 @@ class instance(models.Model):
                 "this is what we get: \n %s") % (
                 self.service_file, e))
 
-    @api.one
     def update_nginx_site(self, context={}, instance_ip_address='127.0.0.1', instance_xmlrpc_port=None, instance_longpolling_port=None):
         _logger.info("Updating nginx site")
         if not self.main_hostname:
@@ -1352,7 +1297,6 @@ class instance(models.Model):
         # Restart nginx
         self.environment_id.server_id.reload_nginx()
 
-    @api.multi
     def action_view_databases(self):
         '''
         This function returns an action that display a form or tree view
