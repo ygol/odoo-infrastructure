@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -26,7 +25,6 @@ class database(models.Model):
     # otra manera que va en partners, porque si no quedan asociados los
     # mensajes a esta clase y no a partner... igual por ahora usamos database
     # para mandar mensajes
-    # @api.multi
     # def message_get_default_recipients(self):
     #     res = {}
     #     for record in self.filtered('partner_id'):

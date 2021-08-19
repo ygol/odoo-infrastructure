@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -24,7 +23,6 @@ class MassMailing(models.Model):
         string='Database Email CC',
     )
 
-    @api.multi
     def send_mail(self):
         for record in self:
             if record.database_email_cc:
