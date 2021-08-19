@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -24,7 +23,6 @@ class project_issue(models.Model):
         help='Company user is using when having the issue',
     )
 
-    @api.multi
     def open_signup_url(self):
         self.ensure_one()
         if self._context.get('with_admin'):

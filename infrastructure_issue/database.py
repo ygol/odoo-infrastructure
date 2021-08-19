@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
@@ -23,7 +22,6 @@ class database(models.Model):
         compute='_get_issues',
     )
 
-    @api.one
     @api.depends('issue_ids')
     def _get_issues(self):
         self.issue_count = len(self.issue_ids)

@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 
 {
     'name': 'Infrastructure Issue - Project',
-    'version': '9.0.1.2.0',
+    'version': "13.0.1.0.0",
     'description': u'Infrastructure Issue',
     'category': u'base.module_category_knowledge_management',
     'author': u'ADHOC SA',
@@ -10,7 +9,7 @@
     'license': 'AGPL-3',
     'depends': [
         'infrastructure',
-        'project_issue',
+        'project',
     ],
     'sequence': 14,
     'summary': '',
