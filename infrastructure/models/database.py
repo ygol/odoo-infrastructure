@@ -3,7 +3,7 @@
 # directory
 ##############################################################################
 from odoo import models, fields, api, SUPERUSER_ID, _
-from odoo.exceptions import except_orm
+from odoo.exceptions import except_orm, Warning
 from odoo.tools.parse_version import parse_version
 from xmlrpc import client
 import operator
@@ -798,9 +798,8 @@ class database(models.Model):
         self.drop_date = drop_date
 
     def show_passwd(self):
-        raise except_orm(
-            _("Password:"),
-            _("%s") % self.admin_password
+        raise Warning(
+            _("Password: '%s'" ) % self.admin_password
         )
 
 # DATABASE CRUD

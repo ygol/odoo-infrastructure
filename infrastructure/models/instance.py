@@ -3,7 +3,7 @@
 # directory
 ##############################################################################
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError, except_orm
+from odoo.exceptions import ValidationError, except_orm, Warning
 from .server import custom_sudo as sudo
 from fabric.contrib.files import exists, append, sed
 from erppeek import Client
@@ -297,9 +297,8 @@ class instance(models.Model):
             self.pg_container = 'db-' + container_name_suffix
 
     def show_passwd(self):
-        raise except_orm(
-            _("Password for user"),
-            _("%s") % self.admin_pass
+        raise Warning(
+            _("Admin Password is: '%s'" ) % self.admin_pass
         )
 
     def action_check_databases(self):
