@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class infrastructure_instance_update(models.Model):
     _name = "infrastructure.instance.update"
+    _description = 'instance_update'
     _inherit = ['mail.activity.mixin', 'mail.thread']
 
     run_after = fields.Datetime(
@@ -216,6 +217,7 @@ class infrastructure_instance_update(models.Model):
 
 class infrastructure_instance_update_detail(models.Model):
     _name = "infrastructure.instance.update.detail"
+    _description = 'instance_update_detail'
 
     update_id = fields.Many2one(
         'infrastructure.instance.update',
