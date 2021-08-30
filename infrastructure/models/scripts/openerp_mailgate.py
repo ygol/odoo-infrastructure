@@ -189,7 +189,7 @@ def main():
     try:
         email_parser.parse(
             msg_txt, custom_values, options.save_original or False)
-    except (Exception):
+    except Exception:
         msg = '\n'.join([
             'parameters',
             '==========',

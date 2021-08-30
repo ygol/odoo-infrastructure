@@ -10,7 +10,7 @@
             <field name="name" filter_domain="['|', '|', ('summary', 'ilike', self), ('shortdesc', 'ilike', self), ('name',
                 'ilike', self)]" string="Module"/>
             <group expand="0" string="Group By">
-                <filter name="Author" string="Author" domain="[]" context="{'group_by':'author'}"/>
+                <filter string="Author" domain="[]" context="{'group_by':'author'}"/>
             </group>
        </search>
     </field>

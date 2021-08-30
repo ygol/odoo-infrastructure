@@ -1,5 +1,5 @@
 id,auto_deactivation_days,auto_drop_days,backups_enable,check_database,color,db_filter/id,instance_log_level,demo_data,description,install_lang_id,name,prefix,protect_db,sequence,server_mode_value,service_type,sources_from_id/id,sources_type,type,url_prefix,workers,workers_number
-inf_db_type_own,0,0,FALSE,TRUE,0,infrastructure.inf_db_filter_no_filter,info,FALSE,Own,en_US,Own,own,TRUE,1,,Docker Restart,,Own,Protected,,Fix Number,0
-inf_db_type_prod,0,0,FALSE,TRUE,0,infrastructure.inf_db_filter_no_filter,info,FALSE,Production,en_US,Production,prod,TRUE,2,,Docker Restart,infrastructure.inf_db_type_own,Clone From,Protected,,Fix Number,0
-inf_db_type_test,30,60,FALSE,FALSE,0,infrastructure.inf_db_filter_no_filter,info,FALSE,Staging,en_US,Staging & Test,test,FALSE,3,test,No Service,infrastructure.inf_db_type_own,Clone From,Auto Deactivation,test,Fix Number,0
-inf_db_type_train,30,60,FALSE,TRUE,0,infrastructure.inf_db_filter_no_filter,info,TRUE,Training,en_US,Training,train,TRUE,4,training,Docker Restart,infrastructure.inf_db_type_prod,Use From,Normal,train,Fix Number,0
+inf_db_type_own,0,0,FALSE,TRUE,0,infrastructure.inf_db_filter_no_filter,info,FALSE,Own,English,Own,own,TRUE,1,,Docker Restart,,Own,Protected,,Fix Number,0
+inf_db_type_prod,0,0,FALSE,TRUE,0,infrastructure.inf_db_filter_no_filter,info,FALSE,Production,English,Production,prod,TRUE,2,,Docker Restart,infrastructure.inf_db_type_own,Clone From,Protected,,Fix Number,0
+inf_db_type_test,30,60,FALSE,FALSE,0,infrastructure.inf_db_filter_no_filter,info,FALSE,Staging,English,Staging & Test,test,FALSE,3,test,No Service,infrastructure.inf_db_type_own,Clone From,Auto Deactivation,test,Fix Number,0
+inf_db_type_train,30,60,FALSE,TRUE,0,infrastructure.inf_db_filter_no_filter,info,TRUE,Training,English,Training,train,TRUE,4,training,Docker Restart,infrastructure.inf_db_type_prod,Use From,Normal,train,Fix Number,0

@@ -7,7 +7,6 @@ from odoo import models, fields, api
 
 class instance_update_add_instances(models.TransientModel):
     _name = 'instance.update.add_instances'
-    _description = 'instance_update_add_instances'
 
     @api.model
     def get_update(self):

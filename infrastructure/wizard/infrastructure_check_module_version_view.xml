@@ -29,7 +29,7 @@
     view_mode="form"
     target="new"
     context="{}"
-    binding_views="form"
+    key2="client_action_multi"
     id="action_infrastructure_check_module_version_wizard"/>
-
+        
 </odoo>

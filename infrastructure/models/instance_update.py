@@ -11,8 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class infrastructure_instance_update(models.Model):
     _name = "infrastructure.instance.update"
-    _description = 'instance_update'
-    _inherit = ['mail.activity.mixin', 'mail.thread']
+    _inherit = ['ir.needaction_mixin', 'mail.thread']
 
     run_after = fields.Datetime(
         readonly=True,
@@ -138,7 +137,7 @@ class infrastructure_instance_update(models.Model):
                         else:
                             instance_repo.repository_pull_clone_and_checkout()
                         updated_repositories += repository
-                    except (Exception, e):
+                    except Exception, e:
                         error_msg = error_template % (
                             'pull repository',
                             'instance %s (%s), repository %s (%s)' % (
@@ -165,7 +164,7 @@ class infrastructure_instance_update(models.Model):
             for inst in all_instances:
                 try:
                     inst.restart_odoo_service()
-                except (Exception, e):
+                except Exception, e:
                     error_msg = error_template % (
                         'restart instance',
                         'instance %s (%s)' % (inst.name, inst.id),
@@ -176,7 +175,7 @@ class infrastructure_instance_update(models.Model):
             for database in all_instances.mapped('database_ids'):
                 try:
                     database.fix_db(uninstall_modules=self.uninstall_modules)
-                except (Exception, e):
+                except Exception, e:
                     error_msg = error_template % (
                         'fix ',
                         'database %s (%s)' % (database.name, database.id),
@@ -217,7 +216,6 @@ class infrastructure_instance_update(models.Model):
 
 class infrastructure_instance_update_detail(models.Model):
     _name = "infrastructure.instance.update.detail"
-    _description = 'instance_update_detail'
 
     update_id = fields.Many2one(
         'infrastructure.instance.update',

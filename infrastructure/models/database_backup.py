@@ -64,7 +64,7 @@ class database_backup(models.Model):
                 raise ValidationError(_('No backup found on remote with name "%s"') % (
                     self.name))
             client.model('db.database.backup').unlink(remote_ids)
-        except (Exception, e):
+        except Exception, e:
             raise ValidationError(_(
                 'Could not delete backup! This is what we get %s' % e))
         # return self.database_id.update_backups_data()

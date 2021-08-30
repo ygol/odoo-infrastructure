@@ -16,9 +16,9 @@
             <field name="server_id"/>
             <filter string="Not Inactive" name="not_inactive" domain="[('state', '!=', 'inactive')]"/>
             <group expand="0" string="Group By...">
-                <filter name="partner_id" string="Partner" context="{'group_by':'partner_id'}"/>
-                <filter name="odoo_version_id" string="Environment Version" context="{'group_by':'odoo_version_id'}"/>
-                <filter name="server_id" string="Server" context="{'group_by':'server_id'}"/>
+                <filter string="Partner" context="{'group_by':'partner_id'}"/>
+                <filter string="Environment Version" context="{'group_by':'odoo_version_id'}"/>
+                <filter string="Server" context="{'group_by':'server_id'}"/>
             </group>
         </search>
     </field>
@@ -109,6 +109,8 @@
         <field name="model">infrastructure.environment</field>
         <field name="arch" type="xml">
             <tree string="environment"
+                fonts="bold:message_unread==True"
+                colors="grey:state=='cancelled';blue:state in ('draft',);black:state in ('active',); red:state in ()"
                 >
                 <field name="message_unread" invisible="1"/>
                 <field name="number"/>
@@ -152,7 +154,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="oe_clear"/>
+                        <div class="oe_clear"/> 
                     </div>
                 </t>
             </templates>

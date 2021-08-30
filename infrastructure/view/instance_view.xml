@@ -18,9 +18,9 @@
             <field name="environment_id"/>
             <filter string="Not Inactive" name="not_inactive" domain="[('state', '!=', 'inactive')]"/>
             <group expand="0" string="Group By...">
-                <filter name="Server" string="Server" context="{'group_by':'server_id'}"/>
-                <filter name="Environment" string="Environment" context="{'group_by':'environment_id'}"/>
-                <filter name="Type" string="Type" context="{'group_by':'database_type_id'}"/>
+                <filter string="Server" context="{'group_by':'server_id'}"/>
+                <filter string="Environment" context="{'group_by':'environment_id'}"/>
+                <filter string="Type" context="{'group_by':'database_type_id'}"/>
             </group>
         </search>
     </field>
@@ -75,7 +75,7 @@
                 <h1>
                     <field name="database_type_id" options="{'no_create': True}" default_focus="1" placeholder="Type..."/>
                     <br/>
-                    <!-- <field name="main_hostname" widget="url"/> -->
+                    <field name="main_hostname" widget="url"/>
                 </h1>
                 <group>
                     <group>
@@ -259,12 +259,14 @@
     <field name="model">infrastructure.instance</field>
     <field name="arch" type="xml">
         <tree string="instance"
+            fonts="bold:message_unread==True"
+            colors="grey:state=='cancelled';blue:state in ('draft',);black:state in ('active',); red:state in ()"
             >
             <field name="message_unread" invisible="1"/>
             <field name="number"/>
             <field name="database_type_id"/>
             <field name="name"/>
-            <!-- <field name="main_hostname" widget="url"/> -->
+            <field name="main_hostname" widget="url"/>
             <field name="server_id"/>
             <field name="environment_id"/>
             <field name="state" />
@@ -280,7 +282,7 @@
     <field name="arch" type="xml">
         <kanban class="oe_background_grey">
             <field name="name"/>
-            <!-- <field name="main_hostname"/> -->
+            <field name="main_hostname"/>
             <field name="environment_id"/>
             <field name="color"/>
             <field name="state"/>
@@ -290,14 +292,14 @@
                     <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card">
                         <div class="oe_kanban_content" style="width: 150px; height: 80px; margin: 0 auto;">
                             <h4 class="text-center"><a type="open"><field name="name"/></a></h4>
-                            <!-- <a  t-att-href="record.main_hostname.value" target="_blank"><field name="main_hostname"/></a> -->
+                            <a  t-att-href="record.main_hostname.value" target="_blank"><field name="main_hostname"/></a>
                             <div class="oe_kanban_database_list">
                                 <a name="action_view_databases" type="object" style="margin-right: 10px">
                                     <t t-raw="record.database_count.raw_value"/> Database
                                 </a>
                             </div>
                         </div>
-                        <div class="oe_clear"/>
+                        <div class="oe_clear"/> 
                     </div>
                 </t>
             </templates>
