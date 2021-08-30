@@ -27,10 +27,11 @@
         'default_use_template': True,
         'default_use_default_to': 1
             }"
-    key2="client_action_multi"
+    binding_views="form"
     id="action_infrastructure_database_email_wizard"/>
         <!-- we add use_default_to so when you save tempalte it use that parameter -->
         <!-- 'default_partner_to': '${object.partner_id.id or \'\'}', -->
     <!-- res_model="infrastructure.database.email.wizard" -->
         <!-- 'default_template_id': ref('email_template_partner'), -->
+
 </odoo>

@@ -16,7 +16,7 @@ class environment(models.Model):
     _name = 'infrastructure.environment'
     _description = 'environment'
     _order = 'number'
-    _inherit = ['ir.needaction_mixin', 'mail.thread']
+    _inherit = ['mail.activity.mixin', 'mail.thread']
     _rec_name = 'display_name'
 
     _states_ = [
@@ -133,12 +133,12 @@ class environment(models.Model):
     @api.depends('state')
     def get_color(self):
         color = 4
-        if self.state == 'draft':
-            color = 7
-        elif self.state == 'cancel':
-            color = 1
-        elif self.state == 'inactive':
-            color = 3
+        # if self.state == 'draft':
+        #     color = 7
+        # elif self.state == 'cancel':
+        #     color = 1
+        # elif self.state == 'inactive':
+        #     color = 3
         self.color = color
 
     @api.depends('database_ids')

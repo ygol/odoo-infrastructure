@@ -3,7 +3,7 @@
 # directory
 ##############################################################################
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError, except_orm
+from odoo.exceptions import ValidationError, except_orm, Warning
 from .server import custom_sudo as sudo
 from fabric.contrib.files import exists, append, sed
 from erppeek import Client
@@ -22,7 +22,7 @@ class instance(models.Model):
     _name = 'infrastructure.instance'
     _description = 'instance'
     _order = 'number'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _states_ = [('draft', 'Draft'), ('active', 'Active'), ('inactive', 'Inactive'), ('cancel', 'Cancel')]
 
     number = fields.Integer(string='Number', required=True, readonly=True, states={'draft': [('readonly', False)]})
@@ -260,7 +260,7 @@ class instance(models.Model):
         self.docker_image_ids = [
             x.docker_image_id.id for x in (
                 self.server_id.server_docker_image_ids)]
-    
+
     @api.depends(
         'database_type_id.prefix',
         'environment_id.name',
@@ -297,9 +297,8 @@ class instance(models.Model):
             self.pg_container = 'db-' + container_name_suffix
 
     def show_passwd(self):
-        raise except_orm(
-            _("Password for user"),
-            _("%s") % self.admin_pass
+        raise Warning(
+            _("Admin Password is: '%s'" ) % self.admin_pass
         )
 
     def action_check_databases(self):
@@ -450,7 +449,9 @@ class instance(models.Model):
             ('service', '=', 'odoo'),
             ('id', 'in', docker_image_ids),
             ('odoo_version_id', '=', self.environment_id.odoo_version_id.id)
-            ], limit=1)
+            ],
+             limit=1
+             )
         self.odoo_image_id = odoo_images
 
     @api.onchange('odoo_image_id')
@@ -585,7 +586,7 @@ class instance(models.Model):
             self.update_conf_file()
         self.run_odoo_service()
         self.action_activate()
-    
+
     def get_commands(self):
 
         pg_volume_links = (
@@ -1002,14 +1003,14 @@ class instance(models.Model):
 
         # remove odoo service if exists
         self.remove_odoo_service()
-        
+
         require.directory(self.conf_path, use_sudo=True, mode='777')
-        
+
         if not exists(self.environment_id.path, use_sudo=True):
             raise except_orm(_('No Environment Path!'), _(
                 "Environment path '%s' does not exists. Please create it "
                 "first!") % (self.environment_id.path))
-        
+
         # Remove file if it already exists, we do it so we can put back some
         # booelan values as unaccent
         if exists(self.conf_file_path, use_sudo=True):
@@ -1021,14 +1022,14 @@ class instance(models.Model):
             _logger.info(
                 "Running update conf command: '%s'" % self.update_conf_cmd)
             sudo(self.update_conf_cmd)
-        except Exception, e:
+        except (Exception, e):
             raise ValidationError(_("Can not create/update configuration file, this is what we get: \n %s") % (e))
-        
+
         sed(self.conf_file_path, '(admin_passwd).*', 'admin_passwd = ' + self.admin_pass, use_sudo=True)
         if self.odoo_image_id.prefix:
-            if ':aeroo' in self.odoo_image_id.prefix:                
+            if ':aeroo' in self.odoo_image_id.prefix:
                 use_aeroo_docs = True
-        
+
         if use_aeroo_docs:
             # add aeroo conf to server conf
             # we run append first to ensure key exist and then sed
@@ -1039,32 +1040,32 @@ class instance(models.Model):
             append(self.conf_file_path, 'aeroo.docs_host = ', partial=True, use_sudo=True)
             server_mode_value = self.database_type_id.server_mode_value or ''
             sed(self.conf_file_path, '(aeroo.docs_host).*', 'aeroo.docs_host = aeroo', use_sudo=True)
-        
+
         add_certificates = False
         if exists(self.server_id.afip_homo_pkey_file, use_sudo=True) and exists(self.server_id.afip_homo_cert_file, use_sudo=True) and exists(self.server_id.afip_prod_pkey_file, use_sudo=True) \
             and exists(self.server_id.afip_prod_cert_file, use_sudo=True):
             add_certificates = True
-            
+
         server_mode_value = self.database_type_id.server_mode_value or ''
         if server_mode_value:
             append(self.conf_file_path, 'server_mode = ', partial=True, use_sudo=True)
             sed(self.conf_file_path, '(server_mode).*', 'server_mode = %s' % server_mode_value, use_sudo=True)
-        
+
         if add_certificates:
             # add certificates to server conf
             # we run append first to ensure key exist and then sed
             append(self.conf_file_path, 'afip_homo_pkey_file = ', partial=True, use_sudo=True)
             if self.server_id.afip_homo_pkey_file:
                 sed(self.conf_file_path, '(afip_homo_pkey_file).*', 'afip_homo_pkey_file = ' + self.server_id.afip_homo_pkey_file, use_sudo=True)
-    
+
             append(self.conf_file_path, 'afip_homo_cert_file = ', partial=True, use_sudo=True)
             if self.server_id.afip_homo_cert_file:
                 sed(self.conf_file_path, '(afip_homo_cert_file).*', 'afip_homo_cert_file = ' + self.server_id.afip_homo_cert_file, use_sudo=True)
-    
+
             append(self.conf_file_path, 'afip_prod_pkey_file = ', partial=True, use_sudo=True)
             if self.server_id.afip_prod_pkey_file:
                 sed(self.conf_file_path, '(afip_prod_pkey_file).*', 'afip_prod_pkey_file = ' + self.server_id.afip_prod_pkey_file, use_sudo=True)
-    
+
             append(self.conf_file_path, 'afip_prod_cert_file = ', partial=True, use_sudo=True)
             if self.server_id.afip_prod_cert_file:
                 sed(self.conf_file_path, '(afip_prod_cert_file).*', 'afip_prod_cert_file = ' + self.server_id.afip_prod_cert_file, use_sudo=True)
@@ -1173,7 +1174,7 @@ class instance(models.Model):
         )
         try:
             sudo('rm -f %s' % nginx_site_file_path)
-        except Exception, e:
+        except (Exception, e):
             _logger.warning((
                 "Could remove nginx site file '%s', "
                 "this is what we get: \n %s") % (
@@ -1199,15 +1200,15 @@ class instance(models.Model):
         error_log = os.path.join(
             self.environment_id.server_id.nginx_log_path,
             'error_' + re.sub('[-]', '_', self.name))
-        
+
         xmlrpc_port = self.xml_rpc_port
         if instance_xmlrpc_port:
             xmlrpc_port = instance_xmlrpc_port
-        
+
         longpolling_port = self.longpolling_port
         if instance_longpolling_port:
             longpolling_port = instance_longpolling_port
-        
+
         # we only use longpolling if workers is set
         longpolling = (
             self.workers and nginx_longpolling_template % self.name or '')

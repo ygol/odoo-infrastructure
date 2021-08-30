@@ -4,7 +4,7 @@
 ##############################################################################
 from odoo import models, fields, api, _
 #from odoo.exceptions import ValidationError
-from odoo.exceptions import UserError, RedirectWarning, ValidationError, except_orm
+from odoo.exceptions import UserError, RedirectWarning, ValidationError, except_orm, Warning
 from fabric.api import env, reboot
 from fabric.contrib.files import append, upload_template
 from fabric.api import sudo
@@ -80,7 +80,7 @@ class server(models.Model):
     _name = 'infrastructure.server'
     _description = 'server'
     _order = 'sequence'
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     _states_ = [('draft', 'Draft'), ('to_install', 'To Install'), ('active', 'Active'), ('inactive', 'Inactive'), ('cancel', 'Cancel')]
 
@@ -196,14 +196,14 @@ class server(models.Model):
     @api.depends('state')
     def get_color(self):
         color = 4
-        if self.state == 'draft':
-            color = 7
-        elif self.state == 'cancel':
-            color = 1
-        elif self.state == 'to_install':
-            color = 3
-        elif self.state == 'inactive':
-            color = 3
+        # if self.state == 'draft':
+        #     color = 7
+        # elif self.state == 'cancel':
+        #     color = 1
+        # elif self.state == 'to_install':
+        #     color = 3
+        # elif self.state == 'inactive':
+        #     color = 3
         self.color = color
 
     @api.depends('environment_ids')
@@ -339,16 +339,14 @@ class server(models.Model):
 
     def show_passwd(self):
         self.ensure_one()
-        raise except_orm(
-            _("Password for user '%s':") % self.user_name,
-            _("%s") % self.password
+        raise Warning(
+            _("Password for user '%s': '%s'" ) % (self.user_name, self.password)
         )
 
     def show_gdrive_passwd(self):
         self.ensure_one()
-        raise except_orm(
-            _("Password for user '%s':") % self.gdrive_account,
-            _("%s") % self.gdrive_passw
+        raise Warning(
+            _("Password for user '%s': '%s'") % (self.gdrive_account, self.gdrive_passw)
         )
 
     def configure_gdrive_sync(self):

@@ -15,10 +15,10 @@
             <field name="used_by_id"/>
             <filter string="Not Inactive" name="not_inactive" domain="[('state', '!=', 'inactive')]"/>
             <group expand="0" string="Group By...">
-                <filter string="Server Configuration" context="{'group_by':'server_configuration_id'}"/>
-                <filter string="Holder" context="{'group_by':'holder_id'}"/>
-                <filter string="Owner" context="{'group_by':'owner_id'}"/>
-                <filter string="Used By" context="{'group_by':'used_by_id'}"/>
+                <filter name="server_configuration_id" string="Server Configuration" context="{'group_by':'server_configuration_id'}"/>
+                <filter name="Holder" string="Holder" context="{'group_by':'holder_id'}"/>
+                <filter name="Owner" string="Owner" context="{'group_by':'owner_id'}"/>
+                <filter name="used_by_id" string="Used By" context="{'group_by':'used_by_id'}"/>
             </group>
         </search>
     </field>
@@ -225,8 +225,6 @@
     <field name="model">infrastructure.server</field>
     <field name="arch" type="xml">
         <tree string="server"
-            fonts="bold:message_unread==True"
-            colors="grey:state=='cancelled';blue:state in ('draft',);black:state in ('active',); red:state in ()"
             >
             <field name="message_unread" invisible="1"/>
             <field name="sequence" widget="handle"/>
@@ -312,7 +310,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="oe_clear"/> 
+                                <div class="oe_clear"/>
                             </div>
                         </t>
                     </templates>

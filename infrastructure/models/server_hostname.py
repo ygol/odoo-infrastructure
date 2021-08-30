@@ -60,7 +60,7 @@ class server_hostname(models.Model):
         ids = []
         if not self.ids:
             return []
-        if isinstance(self.ids, (int, long)):
+        if isinstance(self.ids, int):
             ids = [self.ids]
         else:
             ids = self.ids

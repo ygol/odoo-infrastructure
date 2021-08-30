@@ -1,3 +1,6 @@
 id,name,distrib_codename
 server_conf_14_04_server,Ubuntu 14.04 Server LTS,trusty
 server_conf_16_04_server,Ubuntu 16.04 Server LTS,xenial
+server_conf_18_04_server,Ubuntu 18.04 Server LTS,Bionic
+server_conf_20_04_server,Ubuntu 20.04 Server LTS,Focal
+server_conf_21_04_server,Ubuntu 21.04 Server LTS,Hirsute

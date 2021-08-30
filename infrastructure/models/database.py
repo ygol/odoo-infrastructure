@@ -3,7 +3,7 @@
 # directory
 ##############################################################################
 from odoo import models, fields, api, SUPERUSER_ID, _
-from odoo.exceptions import except_orm
+from odoo.exceptions import except_orm, Warning
 from odoo.tools.parse_version import parse_version
 from xmlrpc import client
 import operator
@@ -47,7 +47,7 @@ class database(models.Model):
     """"""
     _name = 'infrastructure.database'
     _description = 'database'
-    _inherit = ['ir.needaction_mixin', 'mail.thread']
+    _inherit = ['mail.activity.mixin', 'mail.thread']
     _rec_name = 'display_name'
     _states_ = [
         ('draft', 'Draft'),
@@ -798,9 +798,8 @@ class database(models.Model):
         self.drop_date = drop_date
 
     def show_passwd(self):
-        raise except_orm(
-            _("Password:"),
-            _("%s") % self.admin_password
+        raise Warning(
+            _("Password: '%s'" ) % self.admin_password
         )
 
 # DATABASE CRUD
@@ -820,13 +819,13 @@ class database(models.Model):
             _logger.info("Connecting, attempt number: %i" % attempts)
             try:
                 sock._()   # Call a fictive method.
-            except xmlrpclib.Fault:
+            except (xmlrpclib.Fault):
                 # connected to the server and the method doesn't exist which
                 # is expected.
                 _logger.info("Connected to socket")
                 connected = True
                 pass
-            except socket.error:
+            except (socket.error):
                 _logger.info("Could not connect to socket")
                 pass
             except:

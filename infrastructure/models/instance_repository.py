@@ -109,7 +109,7 @@ class instance_repository(models.Model):
             fabtools.files.remove(
                 self.path, recursive=True, use_sudo=True)
             self.actual_commit = False
-        except Exception, e:
+        except (Exception, e):
             raise ValidationError(_(
                 'Error Removing Folder %s. This is what we get:\n'
                 '%s' % (self.path, e)))
@@ -187,7 +187,7 @@ class instance_repository(models.Model):
                 update=update,
             )
             self._cr.commit()
-        except Exception, e:
+        except (Exception, e):
             raise ValidationError(_(
                 'Error pulling git repository. This is what we get:\n'
                 '%s' % e))

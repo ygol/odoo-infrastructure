@@ -19,9 +19,9 @@
 ##############################################################################
 {
     'name': 'Odoo Infrastructure Management',
-    'version': "14.0.1.0.0",
+    'version': "14.0.1.3.0",
     'category': 'base.module_category_knowledge_management',
-    'author': 'ADHOC SA',
+    'author': 'ADHOC SA, ' 'Yves Goldberg (Ygol Internetwork) ',
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
     'depends': [
@@ -31,7 +31,7 @@
         # 'web_ir_actions_act_window_message',
     ],
     'external_dependencies': {
-        #'python': ['fabric', 'fabtools', 'erppeek']
+        # 'python': ['fabric3', 'fabtools-python', 'erppeek']
     },
     'data': [
         'wizard/duplicate_db_wizard_view.xml',
@@ -79,7 +79,7 @@
         'data/infrastructure.repository_branch.csv',
         'data/infrastructure.repository.csv',
         'data/infrastructure.server_configuration.csv',
-        #'data/infrastructure.server_configuration_command.csv',
+        'data/infrastructure.server_configuration_command.csv',
         'data/infrastructure.odoo_version.csv',
         'data/infrastructure.docker_image.csv',
         'data/infrastructure.docker_image.tag.csv',
