@@ -427,7 +427,7 @@ class database(models.Model):
             return True
         try:
             client = self.get_client()
-        except (Exception, e):
+        except Exception as e:
             msg = _(
                 'Could not get state!\n'
                 'This is what we get %s' % e)
@@ -453,7 +453,7 @@ class database(models.Model):
         try:
             backups_state = client.model(
                 'db.database').get_overall_backups_state()
-        except (Exception, e):
+        except Exception as e:
             msg = _(
                 'Could not get state!\n'
                 'This is what we get %s' % e)
@@ -487,7 +487,7 @@ class database(models.Model):
         # we make a try because perhups instances is not up
         try:
             client = self.get_client()
-        except (Exception, e):
+        except Exception as e:
             msg = _(
                 'Could not get state!\n'
                 'This is what we get %s' % e)
@@ -513,7 +513,7 @@ class database(models.Model):
         try:
             update_state = client.model(
                 'ir.module.module').get_overall_update_state()
-        except (Exception, e):
+        except Exception as e:
             msg = (_(
                 'Could not get state!\n'
                 'This is what we get %s' % e))
@@ -665,15 +665,16 @@ class database(models.Model):
     @api.depends('state')
     def get_color(self):
         color = 4
-        if self.state == 'draft':
-            color = 7
-        elif self.state == 'cancel':
-            color = 1
-        elif self.state == 'inactive':
-            color = 3
-        if self.overall_state != 'ok':
-            color = 2
-        self.color = color
+        for rec in self:
+            if rec.state == 'draft':
+                color = 7
+            elif rec.state == 'cancel':
+                color = 1
+            elif rec.state == 'inactive':
+                color = 3
+            if rec.overall_state != 'ok':
+                color = 2
+            rec.color = color
 
     @api.onchange('instance_id')
     def _onchange_instance(self):
@@ -896,7 +897,7 @@ class database(models.Model):
                 # start
                 sock = self.get_sock(max_attempts=1000)
                 sock.drop(self.instance_id.admin_pass, self.name)
-            except (Exception, e):
+            except Exception as e:
                 raise ValidationError(_(
                     'Unable to drop Database. If you are working in an '
                     'instance with "workers" then you can try '
@@ -916,7 +917,7 @@ class database(models.Model):
                 name,
                 keep_till_date,
             )
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(_(
                 'Could not make backup! This is what we get %s' % e))
         if not bd_result.get('backup_name', False):
@@ -936,7 +937,7 @@ class database(models.Model):
         try:
             return sock.migrate_databases(
                 self.instance_id.admin_pass, [self.name])
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(_(
                 'Unable to migrate Database. If you are working in an '
                 'instance with "workers" then you can try '
@@ -955,7 +956,7 @@ class database(models.Model):
                 # we ask again for sock and try to connect waiting for start
                 sock = self.get_sock(max_attempts=1000)
                 sock.rename(self.instance_id.admin_pass, self.name, new_name)
-            except (Exception, e):
+            except Exception as e:
                 raise ValidationError(_(
                     'Unable to rename Database. If you are working in an '
                     'instance with "workers" then you can try '
@@ -1016,7 +1017,7 @@ class database(models.Model):
                     'instance. This is what we get: \n %s') % (
                     db_name, response['result'].get('error')))
             _logger.info('Back Up %s Restored Succesfully' % db_name)
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(_(
                 'Unable to restore bd %s, you can try restartin target '
                 'instance. This is what we get: \n %s') % (
@@ -1037,7 +1038,7 @@ class database(models.Model):
         try:
             sock.duplicate_database(
                 self.instance_id.admin_pass, self.name, new_database_name)
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(
                 _('Unable to duplicate Database. This is what we get:\n%s') % (
                     e))
@@ -1074,7 +1075,7 @@ class database(models.Model):
     #             self.instance_id.admin_pass, self.name, new_database_name)
     #         client.model('db.database').backups_state(
     #             new_database_name, backups_enable)
-    #     except (Exception, e):
+    #     except Exception as e:
     #         raise ValidationError(_(
     #             'Unable to duplicate Database. This is what we get:\n%s') % (
     #               e))
@@ -1108,7 +1109,7 @@ class database(models.Model):
         # remaining = 0
         try:
             return self.get_client(not_database)
-        except (Exception, e):
+        except Exception as e:
             if attempts:
                 time.sleep(1)
                 return self.get_client_attempts(
@@ -1121,7 +1122,7 @@ class database(models.Model):
         try:
             if not_database:
                 return Client(self.instance_id.main_hostname)
-        except (Exception, e):
+        except Exception as e:
             raise except_orm(
                 _("Unable to Connect to Database."),
                 _('Error: %s') % e
@@ -1142,7 +1143,7 @@ class database(models.Model):
                     db=self.name,
                     user='admin',
                     password=self.admin_password)
-            except (Exception, e):
+            except Exception as e:
                 raise except_orm(
                     _("Unable to Connect to Database."),
                     _('Error: %s') % e
@@ -1286,7 +1287,7 @@ class database(models.Model):
             mail_server_obj = client.model('ir.mail_server')
             return mail_server_obj.load(imp_fields, rows)
 
-        except (Exception, e):
+        except Exception as e:
             raise except_orm(
                 _("Unable to Upload SMTP Config."),
                 _('Error: %s') % e
@@ -1308,7 +1309,7 @@ class database(models.Model):
             user_obj = client.model('res.users')
             return user_obj.change_password(current_passwd, new_passwd)
 
-        except (Exception, e):
+        except Exception as e:
             raise except_orm(
                 _("Unable to change password."),
                 _('Error: %s') % e

@@ -133,13 +133,14 @@ class environment(models.Model):
     @api.depends('state')
     def get_color(self):
         color = 4
-        # if self.state == 'draft':
-        #     color = 7
-        # elif self.state == 'cancel':
-        #     color = 1
-        # elif self.state == 'inactive':
-        #     color = 3
-        self.color = color
+        for rec in self:
+            if rec.state == 'draft':
+                color = 7
+            elif rec.state == 'cancel':
+                color = 1
+            elif rec.state == 'inactive':
+                color = 3
+            rec.color = color
 
     @api.depends('database_ids')
     def _get_databases(self):

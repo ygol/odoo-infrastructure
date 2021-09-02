@@ -196,15 +196,16 @@ class server(models.Model):
     @api.depends('state')
     def get_color(self):
         color = 4
-        # if self.state == 'draft':
-        #     color = 7
-        # elif self.state == 'cancel':
-        #     color = 1
-        # elif self.state == 'to_install':
-        #     color = 3
-        # elif self.state == 'inactive':
-        #     color = 3
-        self.color = color
+        for rec in self:
+            if rec.state == 'draft':
+                color = 7
+            elif rec.state == 'cancel':
+                color = 1
+            elif rec.state == 'to_install':
+                color = 3
+            elif rec.state == 'inactive':
+                color = 3
+            rec.color = color
 
     @api.depends('environment_ids')
     def _get_environments(self):
@@ -382,7 +383,7 @@ class server(models.Model):
         self.get_env()
         try:
             custom_sudo('service nginx restart')
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(
                 _('Could Not Restart Nginx! This is what we get: \n %s') % (e))
 
@@ -391,7 +392,7 @@ class server(models.Model):
         self.get_env()
         try:
             custom_sudo('nginx -s reload')
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(
                 _('Could Not Reload Nginx! This is what we get: \n %s') % (e))
 
@@ -439,7 +440,7 @@ class server(models.Model):
                 local_mailgate_file, self.base_path,
                 use_sudo=True,
                 mode='0777')
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(_(
                 "Can not run upload mailgate file:\n"
                 "This is what we get:\n%s") % e)

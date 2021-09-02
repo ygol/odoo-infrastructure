@@ -162,13 +162,14 @@ class instance(models.Model):
     @api.depends('state')
     def get_color(self):
         color = 4
-        if self.state == 'draft':
-            color = 7
-        elif self.state == 'cancel':
-            color = 1
-        elif self.state == 'inactive':
-            color = 3
-        self.color = color
+        for rec in self:
+            if rec.state == 'draft':
+                color = 7
+            elif rec.state == 'cancel':
+                color = 1
+            elif rec.state == 'inactive':
+                color = 3
+            rec.color = color
 
     @api.depends('environment_id.odoo_version_id.name')
     def get_odoo_version(self):
@@ -1022,7 +1023,7 @@ class instance(models.Model):
             _logger.info(
                 "Running update conf command: '%s'" % self.update_conf_cmd)
             sudo(self.update_conf_cmd)
-        except (Exception, e):
+        except Exception as e:
             raise ValidationError(_("Can not create/update configuration file, this is what we get: \n %s") % (e))
 
         sed(self.conf_file_path, '(admin_passwd).*', 'admin_passwd = ' + self.admin_pass, use_sudo=True)
@@ -1174,7 +1175,7 @@ class instance(models.Model):
         )
         try:
             sudo('rm -f %s' % nginx_site_file_path)
-        except (Exception, e):
+        except Exception as e:
             _logger.warning((
                 "Could remove nginx site file '%s', "
                 "this is what we get: \n %s") % (
