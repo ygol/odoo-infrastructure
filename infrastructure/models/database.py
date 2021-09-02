@@ -335,8 +335,8 @@ class database(models.Model):
 
     @api.model
     def cron_check_databases(self):
-        # TODO mejorar y solo verificar las que no fueron verificadas en el
-        # ultimo intervalo de cron
+        # TODO improve and only check the ones that were not checked
+        # in the last cron interval
 #         if get_mode():
 #             _logger.info(
 #                 'Check databases cron is disable by server_mode. '
@@ -389,8 +389,8 @@ class database(models.Model):
             'update_state': False,
         })
 
-    # TODO mejorar el codigo este de do_not_raise, hacerlo mucho mas siemple
-    # se repite lo mismo en tres funciones distintas en distintos momentos
+    # TODO improve the code for do_not_raise, make it much simpler.
+    # the same thing is repeated in three different functions at different times
     def refresh_base_modules_state(self):
         self.ensure_one()
         do_not_raise = self._context.get('do_not_raise', False)
@@ -567,8 +567,8 @@ class database(models.Model):
             return True
 
         _logger.info('Fixing db %s' % self.name)
-        # TODO puede dar timeout si no responde la bd, en realidad en cualqueir
-        # lugar de client, deberiamos ver como gestionarlo
+        # TODO It can timeout if the database does not respond,
+        # actually anywhere in the client, we should see how to manage it
         raise_msg = False
         restart_if_needed = False
         res = client.model('db.configuration').fix_db(
@@ -582,8 +582,8 @@ class database(models.Model):
         """
         modules_names is a list of modules names to be reinit
         """
-        # TODO lo ideal sería hacer un metodo algo mas lindo pero no encontre
-        # la manera
+        # TODO The ideal would be to make a more beautiful method
+        # but I did not find a way
         _logger.info('Initializing modules: %s' % modules_names)
 
         # update module list
@@ -605,7 +605,7 @@ class database(models.Model):
         # run again odoo server
         self.instance_id.run_odoo_service()
 
-        # TODO mejorar esto y ver que el servicio este andando
+        # TODO improve this and see that the service is working
         time.sleep(10)
 
     def install_base_modules(self):

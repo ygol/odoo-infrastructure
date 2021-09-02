@@ -155,8 +155,7 @@ class database_type(models.Model):
 
     def get_password(self):
         self.ensure_one()
-        # TODO depreciar db_admin_pass e instance_admin_pass que ya no los
-        # usamos
+        # TODO deprecate db_admin_pass and instance_admin_pass that we don't use
         chars = string.ascii_letters + string.digits
         # no usamos estas porque nos dan error con docker
         # + '!@#$%^&*()'

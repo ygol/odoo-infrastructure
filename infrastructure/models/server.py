@@ -64,11 +64,11 @@ def custom_sudo(command, user=False, group=False, dont_raise=False):
         if dont_raise:
             _logger.warning((
                 "Can not run command:\n%s\nThis is what we get:\n%s") % (
-                res.real_command, unicode(res.stdout, 'utf-8')))
+                res.real_command, str(res.stdout)))
         else:
             raise ValidationError(_(
                 "Can not run command:\n%s\nThis is what we get:\n%s") % (
-                res.real_command, unicode(res.stdout, 'utf-8')))
+                res.real_command, str(res.stdout)))
     env.warn_only = False
     return res
 
@@ -455,8 +455,8 @@ class server(models.Model):
     def module_path(self):
         encoding = sys.getfilesystemencoding()
         if self.we_are_frozen():
-            return os.path.dirname(unicode(sys.executable, encoding))
-        return os.path.dirname(unicode(__file__, encoding))
+            return os.path.dirname(str(sys.executable).encode(encoding))
+        return os.path.dirname(str(__file__.encode(encoding)))
 
     def install_postfix(self):
         # def install_postfix(mailname):
