@@ -68,8 +68,9 @@ class repository(models.Model):
 
     @api.depends('directory', 'addons_subdirectory')
     def _get_addons_path(self):
-        self.addons_path = os.path.join(
+        for rec in self:
+            rec.addons_path = os.path.join(
             '/mnt/extra-addons',
-            self.directory,
-            self.addons_subdirectory and self.addons_subdirectory or '',
+            rec.directory,
+            rec.addons_subdirectory and rec.addons_subdirectory or '',
         )

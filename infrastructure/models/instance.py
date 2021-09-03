@@ -424,6 +424,12 @@ class instance(models.Model):
                 x.repository_id.addons_path for x in (
                     self.instance_repository_ids) if x.repository_id.addons_path]
             self.addons_path = ','.join(addons_paths)
+            # addons_paths = []
+            # for repo in self.instance_repository_ids:
+            #     if repo.repository_id:
+            #         print("#############################")
+            #         addons_paths.append(repo.repository_id.addons_path)
+            # self.addons_path = ','.join(addons_paths)
 
     @api.onchange('environment_id')
     def _onchange_environment(self):

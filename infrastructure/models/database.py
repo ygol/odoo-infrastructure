@@ -6,6 +6,7 @@ from odoo import models, fields, api, SUPERUSER_ID, _
 from odoo.exceptions import except_orm, Warning
 from odoo.tools.parse_version import parse_version
 from xmlrpc import client
+import xmlrpc.client as xmlrpclib
 import operator
 import socket
 import urllib.parse

@@ -47,10 +47,9 @@ def synchronize_on_config_parameter(env, parameter, nowait=False):
             )
 
 
-# TODO deberiamos cambiar esto por los metodos propios de fabtools para
-# gestionar errores asi tmb, por ejemplo, lo toma fabtools y otros comandos
+# TODO We should change this for fabtools own methods to handle errors
 def custom_sudo(command, user=False, group=False, dont_raise=False):
-    # TODO esto habria que pasrlo con *args, **kwargs
+    # TODO this should happen with * args, * kwargs
     env.warn_only = True
     if user and group:
         res = sudo(command, user=user, group=group)
