@@ -77,10 +77,11 @@ class instance_repository(models.Model):
 
     @api.depends('instance_id.sources_path', 'repository_id.directory')
     def get_path(self):
-        self.path = os.path.join(
-            self.instance_id.sources_path,
-            self.repository_id.directory
-        )
+        for repo_path in self:
+            repo_path.path = os.path.join(
+                repo_path.instance_id.sources_path,
+                repo_path.repository_id.directory
+            )
 
     @api.onchange('repository_id')
     def change_repository(self):
@@ -139,60 +140,118 @@ class instance_repository(models.Model):
         self.repository_pull_clone_and_checkout()
         self.instance_id.check_instance_and_bds()
 
+    # def repository_pull_clone_and_checkout(self, update=True):
+    #     _logger.info("Updateing/getting repository %s with update=%s" % (
+    #         self.repository_id.name, update))
+    #     if self.repository_id.error_message:
+    #         raise ValidationError(self.repository_id.error_message)
+    #     if self.actual_commit and not update:
+    #         return True
+    #     self.instance_id.environment_id.server_id.get_env()
+    #     path = self.path
+    #     if self.sources_from_id:
+    #         # check if repository exists
+    #         source_repository = self.search([
+    #             ('repository_id', '=', self.repository_id.id),
+    #             ('instance_id', '=', self.sources_from_id.id),
+    #         ], limit=1)
+    #         if not source_repository:
+    #             raise ValidationError(_(
+    #                 'Source repository not found for %s on instance %s') % (
+    #                 self.repository_id.name, self.sources_from_id.name))
+    #         if source_repository.branch_id != self.branch_id:
+    #             raise ValidationError(_(
+    #                 'Source repository branch and target branch must be the '
+    #                 'same\n'
+    #                 '* Source repository branch: %s\n'
+    #                 '* Target repository branch: %s\n') % (
+    #                 source_repository.branch_id.name, self.branch_id.name))
+    #         actual_commit = "%s / %s" % (
+    #             source_repository.actual_commit,
+    #             fields.Datetime.to_string(
+    #                 fields.Datetime.context_timestamp(self, datetime.now())))
+    #         remote_url = os.path.join(
+    #             self.sources_from_id.sources_path,
+    #             self.repository_id.directory
+    #         )
+    #     else:
+    #         remote_url = self.repository_id.url
+    #         actual_commit = fields.Datetime.to_string(
+    #             fields.Datetime.context_timestamp(self, datetime.now()))
+    #     try:
+    #         # TODO mejorar aca y usar la api de github para pasar depth = 1 y
+    #         # manejar errores
+    #         working_copy(
+    #             remote_url,
+    #             path=path,
+    #             branch=self.branch_id.name,
+    #             update=update,
+    #         )
+    #         self._cr.commit()
+    #     except Exception as e:
+    #         raise ValidationError(_(
+    #             'Error pulling git repository. This is what we get:\n'
+    #             '%s' % e))
+
+    #     # por ahora lo usamos para chequear que ya se descargo
+    #     self.actual_commit = actual_commit
+
+    #     return True
     def repository_pull_clone_and_checkout(self, update=True):
-        _logger.info("Updateing/getting repository %s with update=%s" % (
-            self.repository_id.name, update))
-        if self.repository_id.error_message:
-            raise ValidationError(self.repository_id.error_message)
-        if self.actual_commit and not update:
+        for repo in self:
+            _logger.info("Updateing/getting repository %s with update=%s" % (
+                repo.repository_id.name, update))
+            if repo.repository_id.error_message:
+                raise ValidationError(repo.repository_id.error_message)
+            if repo.actual_commit and not update:
+                return True
+            repo.instance_id.environment_id.server_id.get_env()
+            path = repo.path
+            if repo.sources_from_id:
+                # check if repository exists
+                source_repository = repo.search([
+                    ('repository_id', '=', repo.repository_id.id),
+                    ('instance_id', '=', repo.sources_from_id.id),
+                ], limit=1)
+                if not source_repository:
+                    raise ValidationError(_(
+                        'Source repository not found for %s on instance %s') % (
+                        repo.repository_id.name, repo.sources_from_id.name))
+                if source_repository.branch_id != repo.branch_id:
+                    raise ValidationError(_(
+                        'Source repository branch and target branch must be the '
+                        'same\n'
+                        '* Source repository branch: %s\n'
+                        '* Target repository branch: %s\n') % (
+                        source_repository.branch_id.name, repo.branch_id.name))
+                actual_commit = "%s / %s" % (
+                    source_repository.actual_commit,
+                    fields.Datetime.to_string(
+                        fields.Datetime.context_timestamp(repo, datetime.now())))
+                remote_url = os.path.join(
+                    repo.sources_from_id.sources_path,
+                    repo.repository_id.directory
+                )
+            else:
+                remote_url = repo.repository_id.url
+                actual_commit = fields.Datetime.to_string(
+                    fields.Datetime.context_timestamp(repo, datetime.now()))
+            try:
+                # TODO mejorar aca y usar la api de github para pasar depth = 1 y
+                # manejar errores
+                working_copy(
+                    remote_url,
+                    path=path,
+                    branch=repo.branch_id.name,
+                    update=update,
+                )
+                repo._cr.commit()
+            except Exception as e:
+                raise ValidationError(_(
+                    'Error pulling git repository. This is what we get:\n'
+                    '%s' % e))
+
+            # for now we use it to check that it has already been downloaded
+            repo.actual_commit = actual_commit
+
             return True
-        self.instance_id.environment_id.server_id.get_env()
-        path = self.path
-        if self.sources_from_id:
-            # check if repository exists
-            source_repository = self.search([
-                ('repository_id', '=', self.repository_id.id),
-                ('instance_id', '=', self.sources_from_id.id),
-            ], limit=1)
-            if not source_repository:
-                raise ValidationError(_(
-                    'Source repository not found for %s on instance %s') % (
-                    self.repository_id.name, self.sources_from_id.name))
-            if source_repository.branch_id != self.branch_id:
-                raise ValidationError(_(
-                    'Source repository branch and target branch must be the '
-                    'same\n'
-                    '* Source repository branch: %s\n'
-                    '* Target repository branch: %s\n') % (
-                    source_repository.branch_id.name, self.branch_id.name))
-            actual_commit = "%s / %s" % (
-                source_repository.actual_commit,
-                fields.Datetime.to_string(
-                    fields.Datetime.context_timestamp(self, datetime.now())))
-            remote_url = os.path.join(
-                self.sources_from_id.sources_path,
-                self.repository_id.directory
-            )
-        else:
-            remote_url = self.repository_id.url
-            actual_commit = fields.Datetime.to_string(
-                fields.Datetime.context_timestamp(self, datetime.now()))
-        try:
-            # TODO mejorar aca y usar la api de github para pasar depth = 1 y
-            # manejar errores
-            working_copy(
-                remote_url,
-                path=path,
-                branch=self.branch_id.name,
-                update=update,
-            )
-            self._cr.commit()
-        except Exception as e:
-            raise ValidationError(_(
-                'Error pulling git repository. This is what we get:\n'
-                '%s' % e))
-
-        # por ahora lo usamos para chequear que ya se descargo
-        self.actual_commit = actual_commit
-
-        return True
