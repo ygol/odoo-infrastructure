@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Odoo Infrastructure Management',
-    'version': "14.0.1.7.0",
+    'version': "14.0.1.8.0",
     'category': 'base.module_category_knowledge_management',
     'author': 'ADHOC SA, ' 'Yves Goldberg (Ygol Internetwork) ',
     'website': 'www.adhoc.com.ar',

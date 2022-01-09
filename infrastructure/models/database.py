@@ -775,13 +775,11 @@ class database(models.Model):
         db = super(database, self).create(vals)
         drop_days = db.instance_type_id.auto_drop_days
         if drop_days and not db.drop_date:
-            db.drop_date = (datetime.strptime(
-                db.issue_date, '%Y-%m-%d') + relativedelta(days=drop_days))
+            db.drop_date = db.issue_date + relativedelta(days=drop_days)
         deactivation_date = db.instance_type_id.auto_deactivation_days
         if deactivation_date and not db.deactivation_date:
-            db.deactivation_date = (datetime.strptime(
-                db.issue_date, '%Y-%m-%d') + relativedelta(
-                    days=deactivation_date))
+            db.deactivation_date = db.issue_date + relativedelta(
+                    days=deactivation_date)
         return db
 
     @api.onchange('instance_type_id', 'issue_date')
@@ -789,13 +787,11 @@ class database(models.Model):
         deactivation_date = False
         drop_date = False
         if self.instance_type_id.auto_deactivation_days:
-            deactivation_date = (datetime.strptime(
-                self.issue_date, '%Y-%m-%d') + relativedelta(
-                days=self.instance_type_id.auto_deactivation_days))
+            deactivation_date = self.issue_date + relativedelta(
+                days=self.instance_type_id.auto_deactivation_days)
         if self.instance_type_id.auto_drop_days:
-            drop_date = (datetime.strptime(
-                self.issue_date, '%Y-%m-%d') + relativedelta(
-                days=self.instance_type_id.auto_drop_days))
+            drop_date = self.issue_date + relativedelta(
+                days=self.instance_type_id.auto_drop_days)
         self.deactivation_date = deactivation_date
         self.drop_date = drop_date
 

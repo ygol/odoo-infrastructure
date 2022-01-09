@@ -219,7 +219,7 @@ class server(models.Model):
         self.instance_count = len(self.instance_ids)
 
     def get_env(self):
-        # TODO ver si usamos env.keepalive = True para timeouts the nginx ()
+        # TODO see if we use env.keepalive = True for timeouts the nginx ()
         synchronize_on_config_parameter(
             self.env, FABRIC_LOCKING_PARAMETER
         )
